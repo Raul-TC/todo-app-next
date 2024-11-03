@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --light: #F8F8FA;
+  --dark: #171723;
+  --containerDark: #25273C;
+  --containerLight: #fff;
+  --textDark: #CACDE8;
+  --textLight: #5D5E6F;
+  --active:#3a7bfd;
+  --text-opacity: rgb(75,85,99);
+  --check: linear-gradient(to right bottom, hsl(192, 100%, 67%), hsl(280, 87%, 65%));
+  --bgDesktopDark: url('/bg-desktop-dark.jpg');
+  --bgDesktopLight: url('/bg-desktop-light.jpg');
+  --bgMobileDark: url('/bg-mobile-dark.jpg');
+  --bgMobileLight: url('/bg-mobile-light.jpg');
+}
+
+/* @media (prefers-color-scheme: dark) {
+  :root {
+    --light: #F8F8FA;
+    --dark: #171723;
+    --containerDark: #25273C
+  }
+} */
+
