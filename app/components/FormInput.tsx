@@ -59,7 +59,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew }: Form
 
     }
 
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+    const { attributes, listeners, setNodeRef, transform } = useSortable({ id });
     const style = {
         transform: CSS.Transform.toString(transform),
         // transition,
