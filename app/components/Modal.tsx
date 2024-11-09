@@ -1,13 +1,20 @@
 import React, { Dispatch, SetStateAction } from 'react'
 import { useTaskProvider } from '../hooks/useTaskProvider'
 interface ModalProps {
-    id?: string,
+    id?: number,
     type: string,
     setModal?: Dispatch<SetStateAction<boolean>>,
-    setModalInTask?: Dispatch<SetStateAction<boolean>>
+    setModalInTask?: Dispatch<SetStateAction<{
+        task: string,
+        taskEdited: string,
+        isCheck: boolean,
+        isEditable: boolean,
+        tries: number,
+        modalInTask: boolean,
+        timePassed: { text: string, time: number }
+    }>>
 }
 export const Modal = ({ id, type, setModal, setModalInTask }: ModalProps) => {
-    console.log({ id, type })
     const { dbTasks, handleDeleteTask } = useTaskProvider()
 
     const lengthCompleted = dbTasks.filter(el => el.isDone === true)
@@ -28,7 +35,7 @@ export const Modal = ({ id, type, setModal, setModalInTask }: ModalProps) => {
                         onClick={() => {
                             if (id) {
                                 if (setModalInTask) {
-                                    setModalInTask(false);
+                                    setModalInTask(prevState => ({ ...prevState, modalInTask: false }));
                                 }
                             } else {
                                 if (setModal) {
@@ -43,7 +50,7 @@ export const Modal = ({ id, type, setModal, setModalInTask }: ModalProps) => {
                         onClick={() => {
                             if (id) {
                                 if (setModalInTask) {
-                                    setModalInTask(false);
+                                    setModalInTask(prevState => ({ ...prevState, modalInTask: false }));
                                 }
                             } else {
                                 if (setModal) {
