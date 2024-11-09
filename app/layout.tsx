@@ -1,10 +1,15 @@
 import type { Metadata } from "next";
 import { Josefin_Sans } from "next/font/google"
 import "./globals.css";
-import { TaskProvider } from "./context/TaskContext";
+// import { TaskProvider } from "./context/TaskContext";
 import { Header } from "./components/Header";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Providers } from "./Providers";
+import { Suspense } from "react";
+import TaskSkeleton from "./components/SkeletonTasks";
+import { ThemeProvider } from "./context/ThemeContext";
+import { TaskProvider } from "./context/TaskContext";
 const josefinSans = Josefin_Sans({
   subsets: ['latin'],
   weight: ["100", "200", "300", "400", "500", "600", "700"]
@@ -19,21 +24,30 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode,
 }>) {
   return (
-    <TaskProvider>
-      <html lang="en">
-        <body
-          className={`${josefinSans.className} antialiased dark:bg-darkBg bg-lightBg transition-colors duration-300 ease-in`}
-        >
-          <Header />
-          <main>
-            {children}
-          </main>
-          <ToastContainer />
-        </body>
-      </html>
-    </TaskProvider>
+
+    <html lang="en">
+      <body
+        className={`${josefinSans.className} antialiased dark:bg-darkBg bg-lightBg transition-colors duration-300 ease-in`}
+      >
+        <Providers>
+          <ThemeProvider>
+
+            <TaskProvider>
+              <Header />
+              <Suspense fallback={<TaskSkeleton />}>
+                <main>
+                  {children}
+                  {/* <Login /> */}
+                </main>
+              </Suspense>
+              <ToastContainer />
+            </TaskProvider>
+          </ThemeProvider>
+        </Providers>
+      </body>
+    </html>
   );
 }

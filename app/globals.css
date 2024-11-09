@@ -18,11 +18,10 @@
   --bgMobileLight: url('/bg-mobile-light.jpg');
 }
 
-/* @media (prefers-color-scheme: dark) {
+ @media (prefers-color-scheme: dark) {
   :root {
     --light: #F8F8FA;
     --dark: #171723;
     --containerDark: #25273C
   }
-} */
-
+} 
