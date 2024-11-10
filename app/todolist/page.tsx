@@ -1,12 +1,12 @@
-import { getServerSession } from "next-auth/next"
 import { redirect } from "next/navigation"
 import { DraggableList } from "../components/DraggableList"
 import { StatusCount } from "../components/StatusCount"
 import { StatusTask } from "../components/StatusTask"
 import { ClearCompleted } from "../components/ClearCompleted"
+import { auth } from "@/auth"
 
 export default async function TodoList() {
-    const session = await getServerSession()
+    const session = await auth()
 
     console.log(session, 'ddddd')
     if (!session) redirect('/auth/login')

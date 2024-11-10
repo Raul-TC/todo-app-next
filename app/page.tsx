@@ -1,13 +1,12 @@
 import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth/next';
-import { authOptions } from './api/auth/[...nextauth]/route';
 import { TodoList } from './components/TodoList';
 import { Suspense } from 'react';
 import Loading from './loading';
+import { auth } from '@/auth';
 
 export default async function Home() {
 
-  const session = await getServerSession(authOptions)
+  const session = await auth()
 
   if (!session?.user.id) redirect('/auth/login')
 

@@ -4,7 +4,6 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 interface Task {
     id?: number;
@@ -22,7 +21,7 @@ interface DeleteTaskParams {
 }
 
 interface TaskContextType {
-    userId: number | undefined,
+    userId: string | undefined,
     dbTasks: Task[];
     tasksDone: Task[];
     pendingTask: Task[];
@@ -51,7 +50,8 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const { data: session, status } = useSession()
     const [localStorageKey, setLocalStorageKey] = useState<string | null>(null);
     const userId = session?.user.id
-    const router = useRouter()
+
+    console.log('USERIDDDDD', userId)
     const fetchTask = useCallback(async () => {
         if (!localStorageKey) return;
 
@@ -89,7 +89,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             setLocalStorageKey(`db_${userId}`)
             fetchTask();
         }
-    }, [fetchTask, status, session]);
+    }, [status, fetchTask, status, session]);
 
 
 

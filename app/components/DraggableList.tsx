@@ -13,7 +13,7 @@ export const DraggableList = () => {
     const [isLoading, setIsLoading] = useState(true)
 
     useEffect(() => {
-        if (filteredData.length > 0) {
+        if (filteredData.length >= 0) {
             setIsLoading(false)
         }
     }, [filteredData])

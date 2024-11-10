@@ -1,13 +1,12 @@
 import prisma from "@/libs/db";
-import { authOptions } from "../../auth/[...nextauth]/route";
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
 import { Session } from "next-auth";
+import { auth } from "@/auth";
 
 
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-    const session: Session | null = await getServerSession(authOptions)
+    const session: Session | null = await auth()
 
 
     if (!session || !session.user) {
@@ -42,7 +41,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
 export async function DELETE(req: Request, { params }: { params: { id?: string } }) {
 
-    const session: Session | null = await getServerSession(authOptions)
+    const session: Session | null = await auth()
 
 
     if (!session || !session.user) {
@@ -57,7 +56,7 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
             // Elimina una sola tarea específica usando el ID proporcionado en params
             const deleteTask = await prisma.task.delete({
                 where: {
-                    userId: session.user.id,
+                    userId: Number(session.user.id),
                     id: Number(params.id),
                 }
             });
@@ -67,7 +66,7 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
             // Elimina todas las tareas completadas (`isDone: true`) del usuario actual
             const deleteAllCompletedTasks = await prisma.task.deleteMany({
                 where: {
-                    userId: session.user.id,
+                    userId: Number(session.user.id),
                     isDone: true
                 }
             });

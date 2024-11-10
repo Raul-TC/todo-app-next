@@ -10,7 +10,7 @@ export const useLogout = () => {
         if (session.user.id) {
             localStorage.removeItem(`db_${session.user.id}`)
         }
-        const logout = await signOut({
+        await signOut({
             redirect: false,
             callbackUrl: '/'
         })

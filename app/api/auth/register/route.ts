@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import db from '@/libs/db'
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcryptjs'
 
 interface UserData {
     id: number,
@@ -48,13 +48,18 @@ export async function POST(request: NextRequest) {
             }
         })
 
-        const { password: _, ...user } = newUser
-        return NextResponse.json(user)
-    } catch (error: any) {
-        return NextResponse.json({
-            message: error.message,
+        // const { password: _, ...user } = newUser
+        return NextResponse.json(newUser)
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            return NextResponse.json({
+                message: error.message,
+            }, { status: 500 });
+        }
 
-        },
-            { status: 500 })
+        return NextResponse.json({
+            message: "An unknown error occurred",
+        }, { status: 500 });
+
     }
 }

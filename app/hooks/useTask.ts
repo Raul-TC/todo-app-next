@@ -34,13 +34,13 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
 
         if (taskState.isEditable) {
             if (taskState.taskEdited !== content && taskState.taskEdited !== '') {
-                handleUpdateTask({ idTask: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false, userId: userId!, exist: true });
+                handleUpdateTask({ idTask: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false, userId: Number(userId!), exist: true });
                 setTaskState({ ...taskState, isEditable: false, isCheck: false, timePassed: { text: "0", time: 0 } });
             } else {
                 setTaskState(prevState => ({ ...prevState, isEditable: false }));
             }
         } else {
-            handleAddTask({ task: taskState.task, userId: userId! });
+            handleAddTask({ task: taskState.task, userId: Number(userId!) });
             setTaskState(prevState => ({ ...prevState, task: '' }));
         }
     }, [taskState, content, handleAddTask, handleUpdateTask, id, userId]);
@@ -53,7 +53,7 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
     const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
         setTaskState(prevState => ({ ...prevState, isCheck: !taskState.isCheck, timePassed: { text: "", time: 0 } }));
-        handleUpdateTask({ idTask: id!, status: !isDone, type: 'done', userId: userId!, exist: true });
+        handleUpdateTask({ idTask: id!, status: !isDone, type: 'done', userId: Number(userId!), exist: true });
 
     }
 
