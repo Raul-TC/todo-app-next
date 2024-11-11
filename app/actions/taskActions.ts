@@ -3,7 +3,7 @@ import prisma from "@/libs/db";
 import { Task } from "@prisma/client";
 
 
-export async function getTask({ userId }: { userId: number }) {
+export async function getTask({ userId }: { userId: string }) {
     try {
         const dbb = await prisma.task.findMany({
             where: {
@@ -21,7 +21,7 @@ export async function getTask({ userId }: { userId: number }) {
 
 }
 
-export async function addTask({ task, userId }: { task: string, userId: number }): Promise<Task> {
+export async function addTask({ task, userId }: { task: string, userId: string }): Promise<Task> {
     return await prisma.task.create({
         data:
         {
@@ -34,7 +34,7 @@ export async function addTask({ task, userId }: { task: string, userId: number }
 }
 
 
-export async function updateTask({ id, status, type, content, isNew, userId }: { id: number, status: boolean, type: string, content: string, isNew: boolean, userId: number }) {
+export async function updateTask({ id, status, type, content, isNew, userId }: { id: number, status: boolean, type: string, content: string, isNew: boolean, userId: string }) {
     return await prisma.task.update({
         where: {
             userId: userId,
