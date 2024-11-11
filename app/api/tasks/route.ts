@@ -11,13 +11,13 @@ export async function POST(req: Request) {
     }
 
     try {
-        const { task, userId }: { task: string, userId: number } = await req.json()
+        const { task, userId }: { task: string, userId: string } = await req.json()
         const newTask = await prisma.task.create({
             data: {
                 content: task,
                 isDone: false,
                 isNew: true,
-                userId: Number(userId)
+                userId: userId,
             }
         })
 
@@ -41,7 +41,7 @@ export async function GET() {
     try {
         const tasks = await prisma.task.findMany({
             where: {
-                userId: Number(session.user.id)
+                userId: session.user.id
             },
             orderBy: {
                 id: 'desc'
@@ -75,7 +75,7 @@ export async function DELETE(req: Request) {
 
         const deleteAllCompletedTasks = await prisma.task.deleteMany({
             where: {
-                userId: Number(session.user.id),
+                userId: session.user.id,
                 isDone: true
             }
         });

@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 
 interface Task {
     id?: number;
-    userId: number
+    userId: string
     content: string;
     isDone: boolean;
     isNew?: boolean;
@@ -28,9 +28,9 @@ interface TaskContextType {
     current: string;
     localStorageKey: string | null,
     setLocalStorageKey: React.Dispatch<React.SetStateAction<string | null>>;
-    handleAddTask: ({ task, userId }: { task: string, userId: number }) => void;
+    handleAddTask: ({ task, userId }: { task: string, userId: string }) => void;
     handleDeleteTask: ({ id, type }: DeleteTaskParams) => void;
-    handleUpdateTask: ({ idTask, status, type, content, isNew, userId, exist }: { idTask: number, status?: boolean, type?: string, content?: string, isNew?: boolean, userId: number, exist: boolean }) => void;
+    handleUpdateTask: ({ idTask, status, type, content, isNew, userId, exist }: { idTask: number, status?: boolean, type?: string, content?: string, isNew?: boolean, userId: string, exist: boolean }) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     handleUpdateDragAndDrop: (e: DragEndEvent) => void;
     setCurrent: React.Dispatch<React.SetStateAction<string>>;
@@ -129,7 +129,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     }, [localStorageKey])
 
-    const handleUpdateTask = useCallback(async ({ idTask, status, type, content, isNew, userId, exist = true }: { idTask: number, status?: boolean, type?: string, content?: string, isNew?: boolean, userId: number, exist: boolean }) => {
+    const handleUpdateTask = useCallback(async ({ idTask, status, type, content, isNew, userId, exist = true }: { idTask: number, status?: boolean, type?: string, content?: string, isNew?: boolean, userId: string, exist: boolean }) => {
 
         if (!localStorageKey) return
         try {
@@ -175,7 +175,7 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }, [localStorageKey])
 
 
-    const handleAddTask = useCallback(async ({ task, userId }: { task: string, userId: number }) => {
+    const handleAddTask = useCallback(async ({ task, userId }: { task: string, userId: string }) => {
 
         if (!localStorageKey) return
         try {

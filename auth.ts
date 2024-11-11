@@ -1,53 +1,67 @@
 import NextAuth from "next-auth";
-import { Session } from "next-auth";
-import CredentialsProvider from 'next-auth/providers/credentials'
-import bcrypt from 'bcryptjs'
-import db from "@/libs/db";
-import { User } from "@prisma/client";
+// import CredentialsProvider from 'next-auth/providers/credentials'
+// import bcrypt from 'bcryptjs'
+// import db from "@/libs/db";
+// import { User } from "@prisma/client";
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import prisma from "@/libs/db";
+import authConfig from "./auth.config";
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    providers: [
-        // GithubProvider({
-        //     clientId: process.env.GITHUB_CLIENT_ID as string,
-        //     clientSecret: process.env.GITHUB_CLIENT_SECRET as string
-        // }),
-        CredentialsProvider({
-            name: "Credentials",
-            credentials: {
-                email: { label: "Email", type: "text", placeholder: "Email" },
-                password: { label: "Password", type: "password", placeholder: "Password" }
-            },
-            async authorize(credentials) {
-                console.log(credentials, 'CREDENTIALS')
-                if (!credentials) throw new Error('No credentials provided');
+    adapter: PrismaAdapter(prisma),
+    // providers: [
+    //     // GithubProvider({
+    //     //     clientId: process.env.GITHUB_CLIENT_ID as string,
+    //     //     clientSecret: process.env.GITHUB_CLIENT_SECRET as string
+    //     // }),
+    //     CredentialsProvider({
+    //         name: "Credentials",
+    //         credentials: {
+    //             email: { label: "Email", type: "text", placeholder: "Email" },
+    //             password: { label: "Password", type: "password", placeholder: "Password" }
+    //         },
+    //         // async authorize(credentials) {
+    //         //     try {
+    //         //         console.log(credentials, 'CREDENTIALS')
+    //         //         if (!credentials || !credentials.email || !credentials.password) {
+    //         //             throw new Error('Por favor, ingresa el correo y la contraseña');
+    //         //         }
+    //         //         if (
+    //         //             !credentials ||
+    //         //             typeof credentials.email !== 'string' ||
+    //         //             typeof credentials.password !== 'string'
+    //         //         ) {
+    //         //             throw new Error('Invalid credentials');
+    //         //         }
 
-                if (
-                    !credentials ||
-                    typeof credentials.email !== 'string' ||
-                    typeof credentials.password !== 'string'
-                ) {
-                    throw new Error('Invalid credentials');
-                }
+    //         //         const userFound = await db.user.findUnique({
+    //         //             where: {
+    //         //                 email: credentials?.email
+    //         //             }
+    //         //         }) as User | null;
 
-                const userFound = await db.user.findUnique({
-                    where: {
-                        email: credentials?.email
-                    }
-                }) as User | null;
+    //         //         if (!userFound) {
+    //         //             throw new Error('User no found')
+    //         //         }
 
-                if (!userFound) throw new Error('User no found')
+    //         //         const matchPassword = await bcrypt.compare(credentials?.password, userFound?.password)
 
-                const matchPassword = await bcrypt.compare(credentials?.password, userFound?.password)
+    //         //         if (!matchPassword) throw new Error('Wrong password')
 
-                if (!matchPassword) throw new Error('Wrong password')
+    //         //         return {
+    //         //             id: userFound.id.toString(),
+    //         //             name: userFound.username,
+    //         //             email: userFound.email
+    //         //         }
+    //         //     } catch (error) {
+    //         //         console.log(error)
+    //         //         return null
+    //         //         // throw new Error(error instanceof Error ? error.message : 'Error en la autenticación');
 
-                return {
-                    id: userFound.id.toString(),
-                    name: userFound.username,
-                    email: userFound.email
-                }
-            }
-        })
-    ],
+    //         //     }
+
+    //         // }
+    //     })
+    // ],
     session: {
         strategy: "jwt", // Usar JWT para la sesión
     },
@@ -74,5 +88,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
             return token;
         }
-    }
+    },
+    ...authConfig
 })

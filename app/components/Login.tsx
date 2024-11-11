@@ -1,14 +1,12 @@
 'use client'
 import Link from "next/link"
 import { useLogin } from "../hooks/useLogin"
-import { useSession } from "next-auth/react"
+// import { useSession } from "next-auth/react"
 
 export const Login = () => {
     const { loading, register, onSubmit, errors } = useLogin()
-    const { data: session, status } = useSession()
+    // const { data: session, status } = useSession()
 
-    console.log({ session })
-    console.log({ status })
     // console.log({ update: update() })
     return (
         <div className=' my-4 w-[90%] md:w-1/2 max-w-[1440px] mx-auto'>

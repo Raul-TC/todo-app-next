@@ -19,7 +19,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         const taskDone = type === 'done' ? status : false
         const updatedTask = await prisma.task.update({
             where: {
-                userId: Number(params.id),
+                userId: params.id,
                 id: idTask
             },
             data: {
@@ -56,7 +56,7 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
             // Elimina una sola tarea específica usando el ID proporcionado en params
             const deleteTask = await prisma.task.delete({
                 where: {
-                    userId: Number(session.user.id),
+                    userId: session.user.id,
                     id: Number(params.id),
                 }
             });
@@ -66,7 +66,7 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
             // Elimina todas las tareas completadas (`isDone: true`) del usuario actual
             const deleteAllCompletedTasks = await prisma.task.deleteMany({
                 where: {
-                    userId: Number(session.user.id),
+                    userId: session.user.id,
                     isDone: true
                 }
             });
