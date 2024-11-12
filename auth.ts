@@ -4,10 +4,10 @@ import NextAuth from "next-auth";
 // import db from "@/libs/db";
 // import { User } from "@prisma/client";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import prisma from "@/libs/db";
+import db from "@/libs/db";
 import authConfig from "./auth.config";
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    adapter: PrismaAdapter(prisma),
+    adapter: PrismaAdapter(db),
     // providers: [
     //     // GithubProvider({
     //     //     clientId: process.env.GITHUB_CLIENT_ID as string,

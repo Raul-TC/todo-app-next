@@ -24,36 +24,38 @@ export default {
                 // ) {
                 //     throw new Error('Invalid credentials');
                 // }
+                const { email, password } = validateFields.data
 
-                if (validateFields.success) {
-                    const { email, password } = validateFields.data
+                // if (validateFields.success) {
 
-                    const userFound = await prisma.user.findUnique({
-                        where: {
-                            email: email
-                        }
-                    })
-
-                    console.log({ userFound })
-                    if (!userFound?.email || !userFound?.password) {
-                        return null
+                const userFound = await prisma.user.findUnique({
+                    where: {
+                        email: email
                     }
+                })
 
-                    const matchPassword = await bcryptjs.compare(password, userFound?.password)
+                console.log({ userFound })
+                if (!userFound?.email || !userFound?.password) {
+                    throw new Error('Correo o contraseña incorrectos');
+                }
 
-                    console.log({ matchPassword })
-                    if (matchPassword) {
+                const matchPassword = await bcryptjs.compare(password, userFound?.password)
 
-                        return {
-                            id: userFound.id.toString(),
-                            name: userFound.username,
-                            email: userFound.email
-                        }
-                    }
+                console.log({ matchPassword })
+                if (!matchPassword) {
+                    throw new Error('Correo o contraseña incorrectos');
+
+                }
+
+                // }
+                return {
+                    id: userFound.id.toString(),
+                    name: userFound.username,
+                    email: userFound.email
                 }
                 // } catch (error) {
                 // console.log(error)
-                return null
+                // return null
                 // throw new Error(error instanceof Error ? error.message : 'Error en la autenticación');
 
                 // }

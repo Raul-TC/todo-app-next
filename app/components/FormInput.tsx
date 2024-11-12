@@ -5,7 +5,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Modal } from './Modal'
 import { useTask } from '../hooks/useTask'
-import { motion, Variants } from 'framer-motion'
+import { animate, AnimatePresence, motion, Variants } from 'framer-motion'
 interface FormInputProps {
     isNewTask?: boolean,
     id: number | undefined,
@@ -43,79 +43,84 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
             {isNewTask
                 ?
                 <>
-                    <motion.div
-                        initial='offscreen'
-                        whileInView='onscreen'
-                        variants={itemVariants}
-                        viewport={{ once: true, amount: 0.1 }}
-                        ref={setNodeRef}
-                        style={style}
-                        className={`dark:bg-containerDark ${isNew ? 'animate-tasksAnimate' : ''}  dark:text-textDark bg-containerLight text-textLight w-full group flex items-center transition-colors duration-300 ease-in  justify-between gap-4 p-4`}>
-                        <div className='flex items-center justify-center'>
-                            <input
-                                type='checkbox'
-                                checked={isCheck}
-                                id={id?.toString()}
-                                className={'hidden border-none outline-none'}
-                                onChange={handleChangeCheckbox}>
-                            </input>
+                    <AnimatePresence>
+                        <div style={style} className='w-full'>
 
-                            <label className={`${isCheck ? 'bg-bgCheck text-white' : 'border-[1px] border-gray-300'} w-6 h-6 rounded-full  flex items-center justify-center cursor-pointer`}
-                                htmlFor={id?.toString()}>
-                                {
-                                    <AiOutlineCheck className={` ${isCheck ? 'opacity-100' : ' opacity-0'} transition-all duration-300 ease-in text-sm border-[1px] w-full h-full border-lightBg rounded-full`} />
-                                }
-                            </label>
-                        </div>
-                        {isEditable
-                            ?
-                            <>
-                                <form
-                                    className=' dark:text-lightBg w-full text-textLight h-full text-sm outline-none break-all gap-2 overflow-hidden'
-                                    onSubmit={handleSubmit}>
+                            <motion.div
+                                initial='initial'
+                                animate='animate'
+                                variants={itemVariants}
+                                viewport={{ once: true, amount: 0.1 }}
+                                ref={setNodeRef}
+                                className={`dark:bg-containerDark ${isNew ? 'animate-tasksAnimate' : ''}  dark:text-textDark bg-containerLight text-textLight w-full group flex items-center transition-colors duration-300 ease-in  justify-between gap-4 p-4`}>
+                                <div className='flex items-center justify-center'>
                                     <input
-                                        type="text"
-                                        className='dark:bg-[#2f3041] dark:text-lightBg bg-lightBg w-full text-textLight text-base py-2 outline-none break-all px-3 rounded-md'
-                                        autoFocus
-                                        defaultValue={taskEdited === '' ? content : taskEdited}
-                                        placeholder={content}
-                                        onChange={e => {
-                                            if (e.target.value === taskEdited) {
-                                                setTaskState(prevState => ({ ...prevState, isEditable: false }))
-                                            }
-                                            setTaskState(prevState => ({ ...prevState, taskEdited: e.target.value }))
-                                        }} />
-                                </form>
+                                        type='checkbox'
+                                        checked={isCheck}
+                                        id={id?.toString()}
+                                        className={'hidden border-none outline-none'}
+                                        onChange={handleChangeCheckbox}>
+                                    </input>
 
-                            </>
-                            :
-                            <>
-                                <div   {...attributes}
-                                    {...listeners}
-                                    className='flex flex-col w-full break-all'>
-
-                                    <p className={`${isCheck ? 'text-gray-400 line-through' : ''} text-start block text-base cursor-grab transition-colors duration-300 ease-in w-full`}>{content}</p>
-                                    <span className='text-xs text-textOpacity'>{timePassed.text !== '' ? timePassed.text : '⏱️'}</span>
+                                    <label className={`${isCheck ? 'bg-bgCheck text-white' : 'border-[1px] border-gray-300'} w-6 h-6 rounded-full  flex items-center justify-center cursor-pointer`}
+                                        htmlFor={id?.toString()}>
+                                        {
+                                            <AiOutlineCheck className={` ${isCheck ? 'opacity-100' : ' opacity-0'} transition-all duration-300 ease-in text-sm border-[1px] w-full h-full border-lightBg rounded-full`} />
+                                        }
+                                    </label>
                                 </div>
+                                {isEditable
+                                    ?
+                                    <>
+                                        <form
+                                            className=' dark:text-lightBg w-full text-textLight h-full text-sm outline-none break-all gap-2 overflow-hidden'
+                                            onSubmit={handleSubmit}>
+                                            <input
+                                                type="text"
+                                                className='dark:bg-[#2f3041] dark:text-lightBg bg-lightBg w-full text-textLight text-base py-2 outline-none break-all px-3 rounded-md'
+                                                autoFocus
+                                                defaultValue={taskEdited === '' ? content : taskEdited}
+                                                placeholder={content}
+                                                onChange={e => {
+                                                    if (e.target.value === taskEdited) {
+                                                        setTaskState(prevState => ({ ...prevState, isEditable: false }))
+                                                    }
+                                                    setTaskState(prevState => ({ ...prevState, taskEdited: e.target.value }))
+                                                }} />
+                                        </form>
 
-                            </>
-                        }
-                        <div className='flex items-center justify-center h-full gap-2 flex-none'>
-                            {isEditable ?
-                                <AiOutlineCheck onClick={handleSubmit} className='block text-xl md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer' />
-                                :
-                                <MdModeEditOutline className='md:opacity-0 w-10 p-2 md:hover:text-blue-400 md:group-hover:opacity-100 h-full md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer'
-                                    onClick={() => {
-                                        setTaskState(prevState => ({ ...prevState, isEditable: true, task: content! }))
-                                    }} />
-                            }
-                            <AiOutlineClose
-                                onClick={() => setTaskState(prevState => ({ ...prevState, modalInTask: true }))
+                                    </>
+                                    :
+                                    <>
+                                        <div
+                                            {...attributes}
+                                            {...listeners}
+                                            className='flex flex-col w-full break-all cursor-grab '>
+
+                                            <p className={`${isCheck ? 'text-gray-400 line-through' : ''} text-start block text-base transition-colors duration-300 ease-in w-full`}>{content}</p>
+                                            <span className='text-xs text-textOpacity'>{timePassed.text !== '' ? timePassed.text : '⏱️'}</span>
+                                        </div>
+
+                                    </>
                                 }
-                                className='md:opacity-0 md:group-hover:opacity-100 h-full w-10 p-2 md:hover:text-red-400 md:group-hover:cursor-pointer transition-colors duration-300 ease-in text-xl cursor-pointer'
-                            />
+                                <div className='flex items-center justify-center h-full gap-2 flex-none'>
+                                    {isEditable ?
+                                        <AiOutlineCheck onClick={handleSubmit} className='block text-xl md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer' />
+                                        :
+                                        <MdModeEditOutline className='md:opacity-0 w-10 p-2 md:hover:text-blue-400 md:group-hover:opacity-100 h-full md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer'
+                                            onClick={() => {
+                                                setTaskState(prevState => ({ ...prevState, isEditable: true, task: content! }))
+                                            }} />
+                                    }
+                                    <AiOutlineClose
+                                        onClick={() => setTaskState(prevState => ({ ...prevState, modalInTask: true }))
+                                        }
+                                        className='md:opacity-0 md:group-hover:opacity-100 h-full w-10 p-2 md:hover:text-red-400 md:group-hover:cursor-pointer transition-colors duration-300 ease-in text-xl cursor-pointer'
+                                    />
+                                </div>
+                            </motion.div >
                         </div>
-                    </motion.div >
+                    </AnimatePresence>
                 </>
                 :
                 <>
