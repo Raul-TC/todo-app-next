@@ -3,9 +3,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
 import { signInSchema } from "@/libs/zod"
 import { z } from 'zod'
-import { AuthError } from "next-auth"
 import { useRouter } from "next/navigation"
-import { signIn } from "@/auth"
 import { Login } from "../actions/login"
 interface LoginFormInputs {
     email: string,
