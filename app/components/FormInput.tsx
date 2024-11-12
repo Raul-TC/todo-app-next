@@ -5,7 +5,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Modal } from './Modal'
 import { useTask } from '../hooks/useTask'
-import { animate, AnimatePresence, motion, Variants } from 'framer-motion'
+import { AnimatePresence, motion, Variants } from 'framer-motion'
 interface FormInputProps {
     isNewTask?: boolean,
     id: number | undefined,
