@@ -5,7 +5,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Modal } from './Modal'
 import { useTask } from '../hooks/useTask'
-import { AnimatePresence, motion, Variants } from 'framer-motion'
+import { AnimatePresence, Variants, motion } from 'framer-motion'
 interface FormInputProps {
     isNewTask?: boolean,
     id: number | undefined,
@@ -47,10 +47,11 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                         <div style={style} className='w-full'>
 
                             <motion.div
-                                initial='initial'
-                                animate='animate'
+                                initial='onscreen'
+                                whileInView='animate'
                                 variants={itemVariants}
                                 viewport={{ once: true, amount: 0.1 }}
+                                style={style}
                                 ref={setNodeRef}
                                 className={`dark:bg-containerDark ${isNew ? 'animate-tasksAnimate' : ''}  dark:text-textDark bg-containerLight text-textLight w-full group flex items-center transition-colors duration-300 ease-in  justify-between gap-4 p-4`}>
                                 <div className='flex items-center justify-center'>
@@ -118,7 +119,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                         className='md:opacity-0 md:group-hover:opacity-100 h-full w-10 p-2 md:hover:text-red-400 md:group-hover:cursor-pointer transition-colors duration-300 ease-in text-xl cursor-pointer'
                                     />
                                 </div>
-                            </motion.div >
+                            </motion.div>
                         </div>
                     </AnimatePresence>
                 </>

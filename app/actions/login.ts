@@ -3,10 +3,12 @@
 import { signIn } from "@/auth";
 import { signInSchema } from "@/libs/zod";
 import { AuthError } from "next-auth";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 export const Login = async (data: z.infer<typeof signInSchema>) => {
 
+    console.log('VERIFICANDO EN USE SERVER')
     const validateFields = signInSchema.safeParse(data)
 
     if (!validateFields.success) {
@@ -23,6 +25,7 @@ export const Login = async (data: z.infer<typeof signInSchema>) => {
         })
 
         // toast.success('HOLII')
+        revalidatePath('/')
         return { success: true }
     }
 
@@ -30,7 +33,7 @@ export const Login = async (data: z.infer<typeof signInSchema>) => {
         if (error instanceof AuthError) {
             console.log({ error }, 'TYPEE')
             switch (error.type) {
-                case "CallbackRouteError":
+                case "CredentialsSignin":
                     return { error: "Invalid Credentials", text: error.message }
 
                 default:

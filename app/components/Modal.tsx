@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react'
-import { useTaskProvider } from '../hooks/useTaskProvider'
+import { useTask } from '../hooks/useTask'
 interface ModalProps {
     id?: number,
     type: string,
@@ -15,20 +15,21 @@ interface ModalProps {
     }>>
 }
 export const Modal = ({ id, type, setModal, setModalInTask }: ModalProps) => {
-    const { dbTasks, handleDeleteTask } = useTaskProvider()
+    const { handleDelete } = useTask({})
 
-    const lengthCompleted = dbTasks.filter(el => el.isDone === true)
+    // const lengthCompleted = dbTasks.filter(el => el.isDone === true)
 
     return (
         <div className='bg-[#2c2c2c9f] fixed z-50 top-0 left-0 h-[100vh] w-full flex items-center justify-center'>
             <div className='dark:bg-containerDark dark:text-textDark bg-containerLight text-textLight absolute rounded-2xl flex flex-col items-center justify-center p-7 w-[95%] md:max-w-md'>
                 <h1 className='text-3xl font-bold'>{type === 'one'
                     ? 'Delete Task'
-                    : `Delete ${lengthCompleted.length} Tasks`}</h1>
+                    : `Delete  Tasks`}</h1>
                 <p>
                     {type === 'one'
                         ? "Are you sure you want to delete this take? This will delete the task and cannot be undone."
-                        : `Are you sure you want to delete ${lengthCompleted.length} completed tasks? This will delete the tasks and cannot be undone.`}
+                        : `Are you sure you want to delete  completed tasks? This will delete the tasks and cannot be undone.`
+                    }
                 </p>
                 <div className='flex justify-between w-full gap-3 mt-3'>
                     <button className='text-base font-bold p-3 rounded-md cursor-pointer w-2/3 bg-gray-600 text-white'
@@ -51,13 +52,15 @@ export const Modal = ({ id, type, setModal, setModalInTask }: ModalProps) => {
                             if (id) {
                                 if (setModalInTask) {
                                     setModalInTask(prevState => ({ ...prevState, modalInTask: false }));
+                                    handleDelete({ idTask: id, type })
                                 }
                             } else {
                                 if (setModal) {
                                     setModal(false)
+                                    handleDelete({ type })
                                 }
                             }
-                            handleDeleteTask({ id, type: id ? 'one' : 'all' });
+                            // delet({ id, type: id ? 'one' : 'all' });
                         }
                         }
                     >

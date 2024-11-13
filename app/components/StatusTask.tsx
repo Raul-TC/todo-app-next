@@ -1,8 +1,6 @@
 'use client'
-import { useTaskProvider } from '../hooks/useTaskProvider'
 
-export const StatusTask = () => {
-    const { current, setCurrent } = useTaskProvider()
+export const StatusTask = ({ current, setCurrent }: { current: string, setCurrent: React.Dispatch<React.SetStateAction<string>> }) => {
 
     const status = ['all', 'active', 'completed']
     return (

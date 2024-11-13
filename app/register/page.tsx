@@ -41,11 +41,12 @@ export default function Register() {
             })
 
             router.push('/auth/login')
+            // router.refresh()
         }
     })
 
     return (
-        <div className=' my-4 w-1/2 max-w-[1440px] mx-auto'>
+        <div className=' my-4 w-[90%] md:w-1/2 max-w-[1440px] mx-auto'>
             <h1 className='text-center dark:text-textDark text-2xl md:text-4xl transition-colors ease-in duration-300'>Register</h1>
             <form onSubmit={onSubmit} className='flex flex-col gap-4 w-full my-4'>
 
@@ -92,7 +93,7 @@ export default function Register() {
                     <span className='text-red-500'>{errors.confirmPassword.message}</span>
                 )}
 
-                <button type='submit' className='w-full mx-auto font-bold dark:bg-containerDark py-3 rounded-md dark:text-textDark bg-containerLight border-darkBg text-textLight dark:hover:bg-darkBg hover:bg-textOpacity hover:text-textDark transition-colors duration-300 ease-in dark:hover:border-[0.5px] dark:hover:border-containerLight'>Send</button>
+                <button type='submit' className='w-1/2 mx-auto font-bold dark:bg-containerDark py-3 rounded-md dark:text-textDark bg-containerLight border-darkBg text-textLight dark:hover:bg-darkBg hover:bg-textOpacity hover:text-textDark transition-colors duration-300 ease-in dark:hover:border-[0.5px] dark:hover:border-containerLight'>Send</button>
             </form>
         </div>
     )

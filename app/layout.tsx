@@ -6,10 +6,7 @@ import { Header } from "./components/Header";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Providers } from "./Providers";
-import { Suspense } from "react";
-import TaskSkeleton from "./components/SkeletonTasks";
 import { ThemeProvider } from "./context/ThemeContext";
-import { TaskProvider } from "./context/TaskContext";
 const josefinSans = Josefin_Sans({
   subsets: ['latin'],
   weight: ["100", "200", "300", "400", "500", "600", "700"]
@@ -26,6 +23,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode,
 }>) {
+
   return (
 
     <html lang="en">
@@ -35,16 +33,16 @@ export default function RootLayout({
         <Providers>
           <ThemeProvider>
 
-            <TaskProvider>
-              <Header />
-              <Suspense fallback={<TaskSkeleton />}>
-                <main>
-                  {children}
-                  {/* <Login /> */}
-                </main>
-              </Suspense>
-              <ToastContainer />
-            </TaskProvider>
+            {/* <TaskProvider> */}
+            <Header />
+            {/* <Suspense fallback={<TaskSkeleton />}> */}
+            <main>
+              {children}
+              {/* <Login /> */}
+            </main>
+            {/* </Suspense> */}
+            <ToastContainer />
+            {/* </TaskProvider> */}
           </ThemeProvider>
         </Providers>
       </body>

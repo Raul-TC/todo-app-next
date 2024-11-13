@@ -62,18 +62,17 @@ export const useLogin = () => {
         setLoading(true)
 
         try {
-            const response = await toast.promise(Login(data),
-                {
-                    pending: 'Iniciando Sesión'
-                }
-            )
+            const response = await Login(data)
 
             if (!response?.success) {
                 throw new Error(`${response?.error}`)
             }
-            router.push('/')
-            toast('Sesion Iniciada Correctamente')
-            router.refresh()
+            // router.push('/')
+            if (!response.error) {
+                toast('Sesion Iniciada Correctamente')
+                router.push('/'); // Redirige para asegurar la carga de sesión
+                router.refresh()
+            }
 
             console.log({ response })
         } catch (error) {

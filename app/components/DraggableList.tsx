@@ -1,27 +1,76 @@
 'use client'
-import { closestCenter, DndContext } from '@dnd-kit/core'
-import { useTaskProvider } from '../hooks/useTaskProvider'
+import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core'
 import { FormInput } from './FormInput'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useEffect, useState } from 'react'
-import TaskSkeleton from './SkeletonTasks'
+import { useCallback, useEffect, useMemo } from 'react'
 import { motion, Variants } from 'framer-motion'
-export const DraggableList = () => {
-    const { filteredData, current, handleUpdateDragAndDrop } = useTaskProvider()
-    const hasTasks = filteredData.length > 0;
-    const [isLoading, setIsLoading] = useState(true)
+import { Task } from '@prisma/client'
+
+interface DraggableListProps {
+    tasks: {
+        allTasks: Task[] | null,
+        pendingTasks?: Task[] | null,
+        completedTasks?: Task[] | null,
+    },
+    current: string,
+    setInitialTasks: React.Dispatch<React.SetStateAction<
+        {
+            allTasks: Task[] | null,
+            pendingTasks?: Task[] | null,
+            completedTasks?: Task[] | null,
+        }>>
+}
+
+export const DraggableList = ({ tasks, current, setInitialTasks }: DraggableListProps) => {
+    const hasTasks = tasks.allTasks && tasks.allTasks.length > 0;
+    // const [initialTasks, setInitialTasks] = useState(tasks)
+    // const [tasksDone, setTasksDone] = useState<Task[]>([]);
+    // const [pendingTask, setPendingTask] = useState<Task[]>([]);
+
+    // if (!tasks.allTasks) return
 
     useEffect(() => {
-        if (filteredData.length >= 0) {
-            setIsLoading(false)
+        if (!tasks.allTasks) return
+        const done: Task[] = tasks.allTasks.filter(el => el.isDone)
+        const pending: Task[] = tasks.allTasks.filter(el => !el.isDone)
+
+        setInitialTasks(prevState => ({
+            ...prevState,
+            pendingTasks: pending,
+            completedTasks: done
+        }))
+    }, [current])
+
+    const handleUpdateDragAndDrop = (e: DragEndEvent) => {
+        const { active, over } = e;
+        if (over && active.id !== over.id) {
+            setInitialTasks(prevTasks => {
+                const tasksArray = prevTasks.allTasks ? [...prevTasks.allTasks] : [];
+
+                console.log({ tasksArray })
+                const oldIndex = tasksArray.findIndex((item) => item.id === active.id);
+                const newIndex = tasksArray.findIndex((item) => item.id === over.id);
+                // return arrayMove(items, oldIndex, newIndex);
+
+                const reorderedTasks = arrayMove(tasksArray, oldIndex, newIndex);
+                return {
+                    ...prevTasks,
+                    allTasks: reorderedTasks,
+                    pendingTasks: reorderedTasks.filter((task) => !task.isDone),
+                    completedTasks: reorderedTasks.filter((task) => task.isDone),
+                };
+            });
         }
-    }, [filteredData])
+    };
+    const getFilter = useCallback(() => {
+        if (current === 'all' || current === '') return tasks.allTasks
 
-    if (isLoading) {
-        return <TaskSkeleton />
-    }
+        return current === 'active' ? tasks.pendingTasks : tasks.completedTasks
 
+    }, [current, tasks])
+
+    const filteredData = useMemo(() => getFilter(), [current, tasks, getFilter]);
     if (!hasTasks) {
         return (
             <div className="dark:bg-containerDark bg-containerLight divide-y-[0.15px] dark:text-textDark -mt-[36px] rounded-t-md overflow-hidden text-textLight w-full max-w-4xl transition-colors duration-300 ease-in flex flex-col items-center justify-between">
@@ -31,6 +80,7 @@ export const DraggableList = () => {
             </div>
         )
     }
+
     const variantOnViewContainer: Variants = {
         offscreen: {
             y: '-100',
@@ -50,7 +100,7 @@ export const DraggableList = () => {
     return (
         <>
             {
-                // !hasTasks ?
+                filteredData &&
                 <DndContext
                     collisionDetection={closestCenter}
                     onDragEnd={handleUpdateDragAndDrop}
@@ -61,7 +111,7 @@ export const DraggableList = () => {
                         whileInView="onscreen"
                         viewport={{ once: true, amount: 0.1 }}
                         variants={variantOnViewContainer}
-                        /* <motion.div */
+                        /* <.div */
 
                         className={`dark:bg-containerDark bg-containerLight divide-y-[0.15px] dark:text-textDark -mt-[36px] rounded-t-md overflow-hidden text-textLight w-full max-w-4xl transition-colors duration-300 ease-in flex flex-col items-center justify-between`}>
                         <SortableContext

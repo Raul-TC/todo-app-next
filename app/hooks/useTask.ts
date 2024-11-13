@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useTaskProvider } from "./useTaskProvider";
+import { addTask, deleteAllDoneTasks, deleteTask, updateTask } from "../actions/taskActions";
 
 export interface useTaskProps {
     isNewTask?: boolean,
@@ -11,7 +11,6 @@ export interface useTaskProps {
     updatedAt?: Date
 }
 export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
-    const { userId, handleAddTask, handleUpdateTask } = useTaskProvider()
     const [taskState, setTaskState] = useState({
         task: content || '',
         taskEdited: content || '',
@@ -22,7 +21,7 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
         timePassed: { text: '', time: 0 }
     });
 
-    const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement> | React.MouseEvent<SVGElement> | React.KeyboardEvent<HTMLInputElement>) => {
+    const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<SVGElement> | React.KeyboardEvent<HTMLInputElement>) => {
         e?.preventDefault();
         setTaskState(prevState => ({ ...prevState, tries: prevState.tries + 1 }));
 
@@ -34,16 +33,22 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
 
         if (taskState.isEditable) {
             if (taskState.taskEdited !== content && taskState.taskEdited !== '') {
-                handleUpdateTask({ idTask: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false, userId: userId!, exist: true });
+                // handleUpdateTask({ idTask: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false, userId: userId!, exist: true });
+                await updateTask({ id: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false })
                 setTaskState({ ...taskState, isEditable: false, isCheck: false, timePassed: { text: "0", time: 0 } });
+                toast.success("Tarea actualizada con éxito!");
+
             } else {
                 setTaskState(prevState => ({ ...prevState, isEditable: false }));
             }
         } else {
-            handleAddTask({ task: taskState.task, userId: userId! });
+            // handleAddTask({ task: taskState.task, userId: userId! });
+            await addTask({ task: taskState.task })
+            toast.success("Tarea agregada con éxito!");
+
             setTaskState(prevState => ({ ...prevState, task: '' }));
         }
-    }, [taskState, content, handleAddTask, handleUpdateTask, id, userId]);
+    }, [taskState, content, id]);
 
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -52,8 +57,18 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
 
     const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
+        const newStatus = taskState.isCheck ? false : true;
+
+        updateTask({ id: id!, status: !isDone, type: 'done' });
         setTaskState(prevState => ({ ...prevState, isCheck: !taskState.isCheck, timePassed: { text: "", time: 0 } }));
-        handleUpdateTask({ idTask: id!, status: !isDone, type: 'done', userId: userId!, exist: true });
+        // handleUpdateTask({ idTask: id!, status: !isDone, type: 'done', userId: userId!, exist: true });
+        // toast.success(`${isDone ? 'Tarea Pendiente' : 'Tarea actualizada con éxito!'}`);
+
+        return newStatus
+            ?
+            toast.warn('Tarea ha pasado a pendiente')
+            :
+            toast.success('Tarea actualizada con éxito!')
 
     }
 
@@ -102,9 +117,18 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
         }
     }, [updatedAt]);
 
+    const handleDelete = async ({ type, idTask }: { type: string, idTask?: number }) => {
+
+        if (type === 'one') {
+            await deleteTask({ idTask: idTask! })
+        } else {
+            await deleteAllDoneTasks()
+        }
+        toast.success('Tarea eliminada con éxito!')
+
+    }
 
     return {
-        userId,
         setTaskState,
         task: taskState.task,
         taskEdited: taskState.taskEdited,
@@ -114,6 +138,7 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
         modalInTask: taskState.modalInTask,
         timePassed: taskState.timePassed,
         handleSubmit,
+        handleDelete,
         handleChange,
         handleChangeCheckbox
     }
