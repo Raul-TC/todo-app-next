@@ -43,9 +43,8 @@ export async function addTask({ task }: { task: string }) {
                 userId: userID?.user.id
             }
         })
-        setTimeout(() => {
-            updateTask({ id: add.id, isNew: false, type: 'done' })
-
+        setTimeout(async () => {
+            await updateTask({ id: add.id, isNew: false, type: 'done' })
         }, 300);
 
         revalidatePath('/')
