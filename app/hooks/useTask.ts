@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { addTask, deleteAllDoneTasks, deleteTask, updateTask } from "../actions/taskActions";
+import { crudActions } from "./crudActions";
+import { useTasksStore } from "../stores/tasksStore";
 
 export interface useTaskProps {
     isNewTask?: boolean,
@@ -11,6 +12,11 @@ export interface useTaskProps {
     updatedAt?: Date
 }
 export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
+    const { createTask, updateTask } = useMemo(() => crudActions({}), []);
+    const userId = useTasksStore(state => state.userId)
+    const updatedTaskState = useTasksStore(state => state.updateTask)
+    const alltasks = useTasksStore(state => state.dbTasks)
+    const newTask = useTasksStore(state => state.addTask)
     const [taskState, setTaskState] = useState({
         task: content || '',
         taskEdited: content || '',
@@ -33,8 +39,8 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
 
         if (taskState.isEditable) {
             if (taskState.taskEdited !== content && taskState.taskEdited !== '') {
-                // handleUpdateTask({ idTask: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false, userId: userId!, exist: true });
-                await updateTask({ id: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false })
+                const respUpdate = await updateTask({ idTask: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false, userId: userId?.id!, exist: true })
+                updatedTaskState(respUpdate)
                 setTaskState({ ...taskState, isEditable: false, isCheck: false, timePassed: { text: "0", time: 0 } });
                 toast.success("Tarea actualizada con éxito!");
 
@@ -42,12 +48,15 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
                 setTaskState(prevState => ({ ...prevState, isEditable: false }));
             }
         } else {
-            // handleAddTask({ task: taskState.task, userId: userId! });
-            await addTask({ task: taskState.task })
-            toast.success("Tarea agregada con éxito!");
-
-            setTaskState(prevState => ({ ...prevState, task: '' }));
+            const addNewTask = await createTask({ content: taskState.task, userId: userId?.id!, exist: false })
+            newTask(addNewTask)
+            setTimeout(async () => {
+                let updateRes = await updateTask({ idTask: addNewTask.id, exist: true, isNew: false, userId: addNewTask.userId })
+                updatedTaskState(updateRes)
+            }, 300);
         }
+        setTaskState(prevState => ({ ...prevState, task: '' }));
+
     }, [taskState, content, id]);
 
 
@@ -55,16 +64,13 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
         setTaskState(prevState => ({ ...prevState, task: e.target.value }));
     }
 
-    const handleChangeCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeCheckbox = async (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
-        const newStatus = taskState.isCheck ? false : true;
+        const resUpdated = await updateTask({ idTask: id!, status: !isDone, type: 'done', isNew: false, userId: userId?.id!, exist: true });
 
-        updateTask({ id: id!, status: !isDone, type: 'done' });
         setTaskState(prevState => ({ ...prevState, isCheck: !taskState.isCheck, timePassed: { text: "", time: 0 } }));
-        // handleUpdateTask({ idTask: id!, status: !isDone, type: 'done', userId: userId!, exist: true });
-        // toast.success(`${isDone ? 'Tarea Pendiente' : 'Tarea actualizada con éxito!'}`);
-
-        return newStatus
+        updatedTaskState(resUpdated)
+        return taskState.isCheck
             ?
             toast.warn('Tarea ha pasado a pendiente')
             :
@@ -74,7 +80,7 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
 
     useEffect(() => {
         const timer = setTimeout(() => setTaskState(prevState => ({ ...prevState, tries: 0 })), 10000);
-        if (taskState.tries === 5) {
+        if (taskState.tries === 5 && taskState.task.length <= 0) {
             toast.warning("No hagas spam!, espera 8 segundos para seguir agregando Tareas");
         }
         return () => clearTimeout(timer);
@@ -115,18 +121,7 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
 
             return () => clearInterval(intervalId);
         }
-    }, [updatedAt]);
-
-    const handleDelete = async ({ type, idTask }: { type: string, idTask?: number }) => {
-
-        if (type === 'one') {
-            await deleteTask({ idTask: idTask! })
-        } else {
-            await deleteAllDoneTasks()
-        }
-        toast.success('Tarea eliminada con éxito!')
-
-    }
+    }, [isDone, content, updatedAt]);
 
     return {
         setTaskState,
@@ -138,7 +133,6 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
         modalInTask: taskState.modalInTask,
         timePassed: taskState.timePassed,
         handleSubmit,
-        handleDelete,
         handleChange,
         handleChangeCheckbox
     }

@@ -3,87 +3,68 @@ import { closestCenter, DndContext, DragEndEvent } from '@dnd-kit/core'
 import { FormInput } from './FormInput'
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { motion, Variants } from 'framer-motion'
-import { Task } from '@prisma/client'
+import { useTasksStore } from '../stores/tasksStore'
+import TaskSkeleton from './SkeletonTasks'
+import { Task, User } from '@prisma/client'
 
-interface DraggableListProps {
-    tasks: {
-        allTasks: Task[] | null,
-        pendingTasks?: Task[] | null,
-        completedTasks?: Task[] | null,
-    },
-    current: string,
-    setInitialTasks: React.Dispatch<React.SetStateAction<
-        {
-            allTasks: Task[] | null,
-            pendingTasks?: Task[] | null,
-            completedTasks?: Task[] | null,
-        }>>
-}
 
-export const DraggableList = ({ tasks, current, setInitialTasks }: DraggableListProps) => {
-    const hasTasks = tasks.allTasks && tasks.allTasks.length > 0;
-    // const [initialTasks, setInitialTasks] = useState(tasks)
-    // const [tasksDone, setTasksDone] = useState<Task[]>([]);
-    // const [pendingTask, setPendingTask] = useState<Task[]>([]);
 
-    // if (!tasks.allTasks) return
-
+export const DraggableList = ({ tasksServer }: { tasksServer: Task[] }) => {
+    const tasks = useTasksStore(state => state.dbTasks)
+    const pendingTasks = useTasksStore(state => state.pendingTask)
+    const doneTasks = useTasksStore(state => state.tasksDone)
+    const setPending = useTasksStore(state => state.setTasksPending)
+    const setDone = useTasksStore(state => state.setTasksDone)
+    const setTasks = useTasksStore(state => state.setTasks)
+    const current = useTasksStore(state => state.current)
+    const [isStoreReady, setIsFromStoreReady] = useState(false)
     useEffect(() => {
-        if (!tasks.allTasks) return
-        const done: Task[] = tasks.allTasks.filter(el => el.isDone)
-        const pending: Task[] = tasks.allTasks.filter(el => !el.isDone)
+        if (tasks.length > 0) {
+            setIsFromStoreReady(true)
+        }
 
-        setInitialTasks(prevState => ({
-            ...prevState,
-            pendingTasks: pending,
-            completedTasks: done
-        }))
-    }, [current])
+    }, [tasks])
 
-    const handleUpdateDragAndDrop = (e: DragEndEvent) => {
+    const taskToRender = isStoreReady ? tasks : tasksServer
+    const handleUpdateDragAndDrop = useCallback((e: DragEndEvent) => {
         const { active, over } = e;
         if (over && active.id !== over.id) {
-            setInitialTasks(prevTasks => {
-                const tasksArray = prevTasks.allTasks ? [...prevTasks.allTasks] : [];
+            const oldIndex = tasks.findIndex((item) => item.id === active.id);
+            const newIndex = tasks.findIndex((item) => item.id === over.id);
 
-                console.log({ tasksArray })
-                const oldIndex = tasksArray.findIndex((item) => item.id === active.id);
-                const newIndex = tasksArray.findIndex((item) => item.id === over.id);
-                // return arrayMove(items, oldIndex, newIndex);
+            const reorderedTasks = arrayMove(tasks, oldIndex, newIndex);
+            const pendingTasksDrag = reorderedTasks.filter((task) => !task.isDone)
+            const completedTasks = reorderedTasks.filter((task) => task.isDone)
 
-                const reorderedTasks = arrayMove(tasksArray, oldIndex, newIndex);
-                return {
-                    ...prevTasks,
-                    allTasks: reorderedTasks,
-                    pendingTasks: reorderedTasks.filter((task) => !task.isDone),
-                    completedTasks: reorderedTasks.filter((task) => task.isDone),
-                };
-            });
+            setTasks(reorderedTasks)
+            setPending(pendingTasksDrag)
+            setDone(completedTasks)
         }
-    };
+    }, [taskToRender, setTasks, setPending, setDone])
+
     const getFilter = useCallback(() => {
-        if (current === 'all' || current === '') return tasks.allTasks
+        if (current === 'all') return taskToRender
 
-        return current === 'active' ? tasks.pendingTasks : tasks.completedTasks
+        return current === 'active' ? taskToRender.filter(task => !task.isDone) : taskToRender.filter(task => task.isDone)
 
-    }, [current, tasks])
+    }, [current, doneTasks, pendingTasks, taskToRender])
 
-    const filteredData = useMemo(() => getFilter(), [current, tasks, getFilter]);
-    if (!hasTasks) {
-        return (
-            <div className="dark:bg-containerDark bg-containerLight divide-y-[0.15px] dark:text-textDark -mt-[36px] rounded-t-md overflow-hidden text-textLight w-full max-w-4xl transition-colors duration-300 ease-in flex flex-col items-center justify-between">
-                <p className='py-4 text-center w-full h-full'>
-                    {`${current === 'completed' ? 'No has completado ninguna tarea 🥹' : '✍🏻 Agrega una nueva tarea '}`}
-                </p>
-            </div>
-        )
-    }
+    const filteredData = useMemo(() => getFilter(), [getFilter])
+
+
+    useEffect(() => {
+        const done = tasks.filter(el => el.isDone)
+        const pending = tasks.filter(el => !el.isDone)
+
+        setPending(pending)
+        setDone(done)
+    }, [taskToRender, setPending, setDone])
 
     const variantOnViewContainer: Variants = {
         offscreen: {
-            y: '-100',
+            y: -100,
             opacity: 0
         },
         onscreen: {
@@ -97,43 +78,45 @@ export const DraggableList = ({ tasks, current, setInitialTasks }: DraggableList
             }
         }
     }
-    return (
-        <>
-            {
-                filteredData &&
-                <DndContext
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleUpdateDragAndDrop}
-                    modifiers={[restrictToVerticalAxis]}
-                >
-                    <motion.div
-                        initial="offscreen"
-                        whileInView="onscreen"
-                        viewport={{ once: true, amount: 0.1 }}
-                        variants={variantOnViewContainer}
-                        /* <.div */
 
-                        className={`dark:bg-containerDark bg-containerLight divide-y-[0.15px] dark:text-textDark -mt-[36px] rounded-t-md overflow-hidden text-textLight w-full max-w-4xl transition-colors duration-300 ease-in flex flex-col items-center justify-between`}>
-                        <SortableContext
-                            items={filteredData.map(item => item.id!)}
-                            strategy={verticalListSortingStrategy}
-                        >
-                            {filteredData.map((tsk) => (
-                                <FormInput
-                                    key={tsk.id}
-                                    isNewTask id={tsk.id}
-                                    updatedAt={tsk.updatedAt}
-                                    isDone={tsk.isDone}
-                                    content={tsk.content}
-                                    isNew={tsk.isNew} />
-                            )
-                            )}
-                        </SortableContext>
-                    </motion.div>
-                </DndContext>
-                // :
-                // <TaskSkeleton />
-            }
-        </>
+    return (
+
+        <DndContext
+            collisionDetection={closestCenter}
+            onDragEnd={handleUpdateDragAndDrop}
+            modifiers={[restrictToVerticalAxis]}
+        >
+            {filteredData.length === 0 ? (
+                <div className="dark:bg-containerDark bg-containerLight divide-y-[0.15px] dark:text-textDark -mt-[36px] rounded-t-md overflow-hidden text-textLight w-full max-w-4xl transition-colors duration-300 ease-in flex flex-col items-center justify-between">
+                    <p className='py-4 text-center w-full h-full'>
+                        {`${current === 'completed' ? 'No has completado ninguna tarea 🥹' : '✍🏻 Agrega una nueva tarea '}`}
+                    </p>
+                </div>
+            ) : (
+                <motion.div
+                    initial="offscreen"
+                    whileInView="onscreen"
+                    viewport={{ once: true, amount: 0.1 }}
+                    variants={variantOnViewContainer}
+                    className="dark:bg-containerDark bg-containerLight divide-y-[0.15px] dark:text-textDark -mt-[36px] rounded-t-md overflow-hidden text-textLight w-full max-w-4xl transition-colors duration-300 ease-in flex flex-col items-center justify-between">
+                    <SortableContext
+                        items={filteredData.map(item => item.id!)}
+                        strategy={verticalListSortingStrategy}
+                    >
+                        {filteredData.map((tsk) => (
+                            <FormInput
+                                key={tsk.id}
+                                isNewTask
+                                id={tsk.id}
+                                updatedAt={tsk.updatedAt}
+                                isDone={tsk.isDone}
+                                content={tsk.content}
+                                isNew={tsk.isNew} />
+                        ))}
+                    </SortableContext>
+                </motion.div>
+            )}
+        </DndContext>
+
     )
 }

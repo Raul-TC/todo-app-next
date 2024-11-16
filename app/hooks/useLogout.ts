@@ -1,24 +1,20 @@
 'use client'
-import { Session } from "next-auth"
 import { signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { toast } from "react-toastify"
+import { useTasksStore } from "../stores/tasksStore"
 
 export const useLogout = () => {
+    const setUserId = useTasksStore(state => state.setUserId)
     const router = useRouter()
-    const handleLogout = async ({ session }: { session: Session }) => {
-        if (session.user.id) {
-            localStorage.removeItem(`db_${session.user.id}`)
-        }
-        await signOut({
+    const handleLogout = async () => {
+        await toast.promise(signOut({
             redirect: false,
             callbackUrl: '/'
-        })
-
+        }), { pending: 'Cerrando sesión' })
+        setUserId(undefined)
         router.push('/')
         router.refresh()
-        toast.success('Se ha cerrado la sesión')
-
     }
 
     return { handleLogout }

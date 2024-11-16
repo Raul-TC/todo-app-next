@@ -1,22 +1,21 @@
 import { redirect } from 'next/navigation';
 import { TodoList } from './components/TodoList';
 import { Suspense } from 'react';
-import Loading from './loading';
 import { auth } from '@/auth';
-import { getTask } from './actions/taskActions';
+import TaskSkeleton from './components/SkeletonTasks';
+import { crudActions } from './hooks/crudActions';
 
 export default async function Home() {
 
   const session = await auth()
-
-  console.log({ session }, 'EN EL HOME')
+  const { getAllTasks } = crudActions({ session })
   if (!session?.user.id) redirect('/auth/login')
-  const tasks = await getTask()
 
-  console.log({ tasks })
+  const tasks = await getAllTasks()
+
   return (
-    <Suspense key={crypto.randomUUID()} fallback={<Loading />}>
-      <TodoList tasks={tasks} />
+    <Suspense key={crypto.randomUUID()} fallback={<TaskSkeleton />}>
+      <TodoList session={session} tasks={tasks} />
     </Suspense>
   )
 }

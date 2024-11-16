@@ -1,8 +1,11 @@
 'use client'
 
-export const StatusTask = ({ current, setCurrent }: { current: string, setCurrent: React.Dispatch<React.SetStateAction<string>> }) => {
+import { useTasksStore } from "../stores/tasksStore";
 
-    const status = ['all', 'active', 'completed']
+export const StatusTask = () => {
+    const current = useTasksStore((state) => state.current);
+    const setCurrent = useTasksStore((state) => state.setCurrent);
+    const status = ['all', 'active', 'completed'] as const
     return (
         <>
             {status.map((el, index) => <p

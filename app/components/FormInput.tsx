@@ -17,10 +17,11 @@ interface FormInputProps {
 
 export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, updatedAt }: FormInputProps) => {
     const { task, setTaskState, taskEdited, isCheck, isEditable, tries, modalInTask, timePassed, handleChange, handleSubmit, handleChangeCheckbox } = useTask({ id, content, isDone, updatedAt })
-    const { attributes, listeners, setNodeRef, transform } = useSortable({ id: id! });
+    const { attributes, listeners, setNodeRef, transform, } = useSortable({ id: id! });
 
     const style = {
         transform: CSS.Transform.toString(transform),
+        transitionProperty: CSS.Transition.toString({ "duration": 300, easing: "ease", property: 'transform' }),
         touchAction: 'none'
     };
     const itemVariants: Variants = {
@@ -38,6 +39,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
             }
         }
     }
+
     return (
         <>
             {isNewTask
@@ -47,8 +49,8 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                         <div style={style} className='w-full'>
 
                             <motion.div
-                                initial='onscreen'
-                                whileInView='animate'
+                                initial='offscreen'
+                                whileInView='onscreen'
                                 variants={itemVariants}
                                 viewport={{ once: true, amount: 0.1 }}
                                 style={style}
@@ -99,7 +101,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                             className='flex flex-col w-full break-all cursor-grab '>
 
                                             <p className={`${isCheck ? 'text-gray-400 line-through' : ''} text-start block text-base transition-colors duration-300 ease-in w-full`}>{content}</p>
-                                            <span className='text-xs text-textOpacity'>{timePassed.text !== '' ? timePassed.text : '⏱️'}</span>
+                                            <span className='text-xs text-textOpacity'>{timePassed.text !== '' ? timePassed.text : '⏱️ waiting'}</span>
                                         </div>
 
                                     </>
@@ -135,13 +137,13 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                             onChange={handleChange}
                             value={task}
                             placeholder='Create a new task...' />
-                        <button disabled={tries === 5} className={`mr-4 ${tries < 5 ? 'active:translate-y-1' : 'text-red-400'}  transition-colors duration-300 ease-in`} >
+                        <button disabled={tries >= 5 && task.length <= 0} className={`mr-4 ${tries >= 5 && task.length <= 0 ? 'bg-red-400 text-containerLight ' : 'active:translate-y-1'}  transition-colors duration-300 ease-in`} >
                             Add Task
                         </button>
                     </form>
                 </>
             }
-            {modalInTask && <Modal setModalInTask={setTaskState} type={'one'} id={id!} />}
+            {modalInTask && <Modal setModal={setTaskState} type={'one'} id={id!} />}
         </>
     )
 }

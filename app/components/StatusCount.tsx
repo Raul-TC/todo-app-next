@@ -1,19 +1,16 @@
 'use client'
-import { Task } from '@prisma/client'
+import { useTasksStore } from '../stores/tasksStore'
 
-interface StatusCountProps {
-    tasks: {
-        allTasks: Task[] | null,
-        pendingTasks?: Task[] | null,
-        completedTasks?: Task[] | null,
-    },
-    current: string
-}
-export const StatusCount = ({ tasks, current }: StatusCountProps) => {
+export const StatusCount = () => {
     // const { dbTasks, tasksDone, pendingTask, current } = useTaskProvider()
-    if (!tasks.allTasks || !tasks.pendingTasks || !tasks.completedTasks) return
+    const tasks = useTasksStore(state => state.dbTasks)
+    const tasksDone = useTasksStore(state => state.pendingTask)
+    const tasksPending = useTasksStore(state => state.tasksDone)
+    const current = useTasksStore(state => state.current)
 
-    const list = [{ current: 'all', type: tasks.allTasks.length }, { current: 'active', type: tasks.pendingTasks.length }, { current: 'completed', type: tasks.completedTasks.length }]
+    if (!tasks || !tasksDone || !tasksPending) return
+
+    const list = [{ current: 'all', type: tasks.length }, { current: 'active', type: tasksPending.length }, { current: 'completed', type: tasksDone.length }]
 
     return (
         <>
