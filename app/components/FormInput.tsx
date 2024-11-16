@@ -59,7 +59,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                 <div className='flex items-center justify-center'>
                                     <input
                                         type='checkbox'
-                                        checked={isCheck}
+                                        checked={isDone}
                                         id={id?.toString()}
                                         className={'hidden border-none outline-none'}
                                         onChange={handleChangeCheckbox}>
