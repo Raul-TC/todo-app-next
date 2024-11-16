@@ -6,8 +6,8 @@ import Link from "next/link"
 import { auth } from "@/auth"
 export const Header = async () => {
     const session: Session | null = await auth()
+    // const userId = useTasksStore((state) => state.userId);
 
-    console.log('YO SI ME EJCUTO EN EL HEADER')
     return (
         <header className='dark:bg-mobileDark dark:md:bg-desktopDark bg-mobileLight md:bg-desktopLight transition-colors duration-300 ease-in bg-cover bg-no-repeat min-h-[20vh] w-full flex flex-col items-center' >
             <div className='flex flex-col justify-between items-center w-[90%] md:w-full mt-12 max-w-2xl mb-12' >
@@ -17,10 +17,13 @@ export const Header = async () => {
                     </Link>
                     <DarkMode />
                 </div >
-                <div className="flex items-center justify-center w-full my-2">
-                    {session?.user.id && <SignOut session={session} />}
-                </div>
-                {session?.user.id && <FormInput isNewTask={false} id={undefined} />}
+                {session?.user.id
+                    &&
+                    <div className="flex items-center justify-center w-full my-2">
+                        <SignOut session={session} />
+                    </div>
+                }
+                {session?.user?.id && <FormInput isNewTask={false} id={undefined} />}
             </div >
         </header >)
 }

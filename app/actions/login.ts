@@ -8,11 +8,9 @@ import { z } from "zod";
 
 export const Login = async (data: z.infer<typeof signInSchema>) => {
 
-    console.log('VERIFICANDO EN USE SERVER')
     const validateFields = signInSchema.safeParse(data)
 
     if (!validateFields.success) {
-        // toast.error(`❌ Invalid Fields`);
         return ({ error: 'Invalid Fields' })
     }
 
@@ -23,15 +21,12 @@ export const Login = async (data: z.infer<typeof signInSchema>) => {
             password: password,
             redirect: false,
         })
-
-        // toast.success('HOLII')
         revalidatePath('/')
         return { success: true }
     }
 
     catch (error) {
         if (error instanceof AuthError) {
-            console.log({ error }, 'TYPEE')
             switch (error.type) {
                 case "CredentialsSignin":
                     return { error: "Invalid Credentials", text: error.message }

@@ -1,19 +1,12 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
-// import db from "@/libs/db";
-// import { User } from "@prisma/client";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import db from "@/libs/db";
 import { User } from "@prisma/client";
-// import authConfig from "./auth.config";
 export const { handlers, signIn, signOut, auth } = NextAuth({
-    // adapter: PrismaAdapter(db),
+    adapter: PrismaAdapter(db),
     providers: [
-        // GithubProvider({
-        //     clientId: process.env.GITHUB_CLIENT_ID as string,
-        //     clientSecret: process.env.GITHUB_CLIENT_SECRET as string
-        // }),
         CredentialsProvider({
             name: "Credentials",
             credentials: {
@@ -22,7 +15,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
             async authorize(credentials) {
                 try {
-                    console.log(credentials, 'CREDENTIALS')
                     if (!credentials || !credentials.email || !credentials.password) {
                         throw new Error('Por favor, ingresa el correo y la contraseña');
                     }
@@ -59,8 +51,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 } catch (error) {
                     console.log(error)
                     return null
-                    // throw new Error(error instanceof Error ? error.message : 'Error en la autenticación');
-
                 }
 
             }
@@ -73,22 +63,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         signIn: "/auth/login"
     },
     callbacks: {
-        // async redirect({ url, baseUrl }) {
-        //     return baseUrl
-        // },
-        // Modificar la sesión para incluir el ID del usuario
         async session({ session, token }) {
             if (token) {
-                session.user.id = token.sub as string; // sub es el user ID en el token
-                console.log('Session ID:', session.user.id);  // Verifica si ID está presente
-
+                session.user.id = token.sub as string;
             }
             return session;
         },
-        // Agrega el ID del usuario en el token
         async jwt({ token, user }) {
             if (user) {
-                token.sub = user.id; // sub es el campo que se usa para el ID en el token
+                token.sub = user.id;
             }
             return token;
         }

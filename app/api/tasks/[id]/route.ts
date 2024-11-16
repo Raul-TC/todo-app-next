@@ -1,15 +1,8 @@
 import prisma from "@/libs/db";
 import { NextResponse } from "next/server";
-import { Session } from "next-auth";
-import { auth } from "@/auth";
-
-
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-    const session: Session | null = await auth()
-
-
-    if (!session || !session.user) {
+    if (!params.id) {
         return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
     }
 
@@ -25,15 +18,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             data: {
 
                 isDone: taskDone,
-                ...(type !== 'done' && { content }), // Solo actualiza `content` si no es 'done'
+                ...(type !== 'done' && { content }),
                 isNew
             }
         })
 
-        console.log('UPDATE RESPONSE', updatedTask)
         return NextResponse.json(updatedTask)
     } catch (error) {
-        console.log({ paramsss: params.id })
         return NextResponse.json({ message: 'Error al actualizar la tarea', error }, { status: 500 });
     }
 }
@@ -41,43 +32,79 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
 export async function DELETE(req: Request, { params }: { params: { id?: string } }) {
 
-    const session: Session | null = await auth()
 
-
-    if (!session || !session.user) {
-        return NextResponse.json({ message: 'User no authenticated' }, { status: 401 })
+    if (!params.id) {
+        return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
     }
 
     try {
-        const { type } = await req.json()
-
-        console.log('TYPEEE', type)
-        if (params?.id) {
-            // Elimina una sola tarea específica usando el ID proporcionado en params
+        const { idTask, type } = await req.json()
+        if (idTask && type === 'one') {
             const deleteTask = await prisma.task.delete({
                 where: {
-                    userId: session.user.id,
-                    id: Number(params.id),
+                    userId: params.id,
+                    id: idTask,
                 }
             });
-            console.log('TASK ELIMINADA', deleteTask);
             return NextResponse.json(deleteTask);
-        } else if (type === 'all') {
-            // Elimina todas las tareas completadas (`isDone: true`) del usuario actual
+        } else {
             const deleteAllCompletedTasks = await prisma.task.deleteMany({
                 where: {
-                    userId: session.user.id,
+                    userId: params.id,
                     isDone: true
                 }
             });
-            console.log('TAREAS COMPLETADAS ELIMINADAS', deleteAllCompletedTasks);
             return NextResponse.json(deleteAllCompletedTasks);
         }
 
     } catch (error) {
-        console.log({ paramsss: params.id })
         return NextResponse.json({ message: 'Error al actualizar la tarea', error }, { status: 500 });
 
     }
 }
 
+export async function GET(req: Request, { params }: { params: { id?: string } }) {
+
+    if (!params.id) {
+        return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+    }
+
+    try {
+        const tasks = await prisma.task.findMany({
+            where: {
+                userId: params.id
+            },
+            orderBy: {
+                id: 'desc'
+            }
+        })
+
+        return NextResponse.json(tasks)
+    } catch (error) {
+        return NextResponse.json({ message: 'Error al obtener las tareas', error }, { status: 500 })
+
+    }
+}
+
+export async function POST(req: Request, { params }: { params: { id?: string } }) {
+
+    if (!params.id) {
+        return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+    }
+
+    try {
+        const { content, userId }: { content: string, userId: string } = await req.json()
+        const newTask = await prisma.task.create({
+            data: {
+                content,
+                isDone: false,
+                isNew: true,
+                userId,
+
+            }
+        })
+        return NextResponse.json(newTask)
+    } catch (error) {
+        return NextResponse.json({ message: 'Error al crear la tarea', error }, { status: 500 });
+    }
+}

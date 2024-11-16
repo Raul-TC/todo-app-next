@@ -3,7 +3,7 @@ import '@/app/globals.css'; // Importa aquí tu estilo de shimmer
 
 const TaskSkeleton = () => {
     return (
-        <div className='-mt-[44px] w-full md:max-w-2xl mx-auto rounded-md divide-y-2 overflow-hidden bg-lightBg dark:bg-darkBg'>
+        <div className='w-full block md:max-w-2xl mx-auto rounded-md divide-y-2 bg-lightBg dark:bg-darkBg h-full -mt-[36px] overflow-hidden'>
 
             {
                 [...Array(6)].map((_, index) => (

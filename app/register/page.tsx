@@ -14,7 +14,6 @@ export default function Register() {
     const { register, handleSubmit, formState: { errors } } = useForm<RegisterInputs>()
     const router = useRouter()
     const onSubmit = handleSubmit(async data => {
-        console.log(data)
         if (data.password !== data.confirmPassword) {
             return toast.error("Passwords do not match", { position: "bottom-left" })
         }
@@ -35,18 +34,15 @@ export default function Register() {
         }
 
         if (res.ok) {
-
             toast.success("Usuario registrado correctamente", {
                 position: "bottom-left"
             })
-
             router.push('/auth/login')
-            // router.refresh()
         }
     })
 
     return (
-        <div className=' my-4 w-[90%] md:w-1/2 max-w-[1440px] mx-auto'>
+        <div className='w-[90%] md:w-1/2 max-w-md mx-auto min-h-[calc(100vh-183px)] flex flex-col items-center justify-center'>
             <h1 className='text-center dark:text-textDark text-2xl md:text-4xl transition-colors ease-in duration-300'>Register</h1>
             <form onSubmit={onSubmit} className='flex flex-col gap-4 w-full my-4'>
 
