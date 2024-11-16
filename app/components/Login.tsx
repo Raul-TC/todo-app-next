@@ -7,7 +7,6 @@ import { useEffect } from "react"
 
 export const Login = () => {
     const getUserId = useTasksStore(store => store.userId)
-    const tasks = useTasksStore(store => store.userId)
     const { loading, register, onSubmit, errors } = useLogin()
     const router = useRouter()
 

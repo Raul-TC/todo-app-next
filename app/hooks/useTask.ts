@@ -15,7 +15,6 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
     const { createTask, updateTask } = useMemo(() => crudActions({}), []);
     const userId = useTasksStore(state => state.userId)
     const updatedTaskState = useTasksStore(state => state.updateTask)
-    const alltasks = useTasksStore(state => state.dbTasks)
     const newTask = useTasksStore(state => state.addTask)
     const [taskState, setTaskState] = useState({
         task: content || '',
@@ -39,7 +38,7 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
 
         if (taskState.isEditable) {
             if (taskState.taskEdited !== content && taskState.taskEdited !== '') {
-                const respUpdate = await updateTask({ idTask: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false, userId: userId?.id!, exist: true })
+                const respUpdate = await updateTask({ idTask: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false, userId: userId?.id, exist: true })
                 updatedTaskState(respUpdate)
                 setTaskState({ ...taskState, isEditable: false, isCheck: false, timePassed: { text: "0", time: 0 } });
                 toast.success("Tarea actualizada con éxito!");
@@ -48,10 +47,10 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
                 setTaskState(prevState => ({ ...prevState, isEditable: false }));
             }
         } else {
-            const addNewTask = await createTask({ content: taskState.task, userId: userId?.id!, exist: false })
+            const addNewTask = await createTask({ content: taskState.task, userId: userId?.id, exist: false })
             newTask(addNewTask)
             setTimeout(async () => {
-                let updateRes = await updateTask({ idTask: addNewTask.id, exist: true, isNew: false, userId: addNewTask.userId })
+                const updateRes = await updateTask({ idTask: addNewTask.id, exist: true, isNew: false, userId: addNewTask.userId })
                 updatedTaskState(updateRes)
             }, 300);
         }
@@ -66,7 +65,7 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
 
     const handleChangeCheckbox = async (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
-        const resUpdated = await updateTask({ idTask: id!, status: !isDone, type: 'done', isNew: false, userId: userId?.id!, exist: true });
+        const resUpdated = await updateTask({ idTask: id!, status: !isDone, type: 'done', isNew: false, userId: userId?.id, exist: true });
 
         setTaskState(prevState => ({ ...prevState, isCheck: !taskState.isCheck, timePassed: { text: "", time: 0 } }));
         updatedTaskState(resUpdated)

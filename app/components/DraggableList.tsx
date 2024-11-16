@@ -6,8 +6,7 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { motion, Variants } from 'framer-motion'
 import { useTasksStore } from '../stores/tasksStore'
-import TaskSkeleton from './SkeletonTasks'
-import { Task, User } from '@prisma/client'
+import { Task } from '@prisma/client'
 
 
 
