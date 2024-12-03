@@ -101,7 +101,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                             className='flex flex-col w-full break-all cursor-grab '>
 
                                             <p className={`${isCheck ? 'text-gray-400 line-through' : ''} text-start block text-base transition-colors duration-300 ease-in w-full`}>{content}</p>
-                                            <span className='text-xs text-textOpacity'>{timePassed.time >= 0 ? timePassed.text : '⏱️ waiting'}</span>
+                                            <span className='text-xs text-textOpacity'>{timePassed.text !== '' ? timePassed.text : '⏱️ waiting'}</span>
                                         </div>
 
                                     </>
