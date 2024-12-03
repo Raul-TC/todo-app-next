@@ -54,8 +54,8 @@ export const DraggableList = ({ tasksServer }: { tasksServer: Task[] }) => {
 
 
     useEffect(() => {
-        const done = tasks.filter(el => el.isDone)
-        const pending = tasks.filter(el => !el.isDone)
+        const done = taskToRender.filter(el => el.isDone)
+        const pending = taskToRender.filter(el => !el.isDone)
 
         setPending(pending)
         setDone(done)
