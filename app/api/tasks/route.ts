@@ -32,3 +32,30 @@ export async function GET() {
 
     }
 }
+
+export async function POST(req: Request) {
+
+
+    try {
+        const session = await auth()
+        if (!session || !session.user.id) {
+            return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+        }
+
+        // if (params.id !== session?.user.id) {
+        //     return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
+        // }
+        const { content }: { content: string } = await req.json()
+        const newTask = await prisma.task.create({
+            data: {
+                content,
+                isDone: false,
+                isNew: true,
+                userId: session.user.id
+            }
+        })
+        return NextResponse.json(newTask)
+    } catch (error) {
+        return NextResponse.json({ message: 'Error al crear la tarea', error }, { status: 500 });
+    }
+}
