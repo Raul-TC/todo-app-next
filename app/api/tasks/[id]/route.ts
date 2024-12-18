@@ -79,7 +79,9 @@ export async function GET(req: Request, { params }: { params: { id?: string } })
             }
         })
 
-        if (!tasks) return NextResponse.json({ message: "Not Found User" }, { status: 404 })
+        if (tasks.length === 0) {
+            return NextResponse.json({ message: "No tasks found for this user" }, { status: 404 });
+        }
         return NextResponse.json(tasks)
     } catch (error) {
         return NextResponse.json({ message: 'Error al obtener las tareas', error }, { status: 500 })
