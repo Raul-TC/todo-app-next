@@ -17,8 +17,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         if (params.id !== session?.user.id) {
             return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
         }
-        const { idTask, status, type, content, isNew }: { idTask: number, status?: boolean, type?: string, content: string, isNew: boolean } = await req.json()
-        console.log({ idTask, status, type, content, isNew })
+        const { status, type, content, isNew }: { status?: boolean, type?: string, content: string, isNew: boolean } = await req.json()
+        console.log({ status, type, content, isNew })
 
         // const task = await prisma.task.findUnique({
         //     where: {
@@ -49,10 +49,6 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             }
         })
 
-
-
-        console.log({ idTask, status, type, content, isNew })
-        console.log({ updatedTask })
         return NextResponse.json(updatedTask)
     } catch (error) {
         console.log({ error })
@@ -74,8 +70,8 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
         if (params.id !== session?.user.id) {
             return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
         }
-        const { idTask, type } = await req.json()
-        if (idTask && type === 'one') {
+        const { type } = await req.json()
+        if (type === 'one') {
             const deleteTask = await prisma.task.delete({
                 where: {
                     userId: session.user.id,
@@ -100,7 +96,7 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
     }
 }
 
-export async function GET(req: Request, { params }: { params: { id?: string } }) {
+export async function GET({ params }: { params: { id?: string } }) {
 
 
 
@@ -143,14 +139,13 @@ export async function POST(req: Request) {
         // if (params.id !== session?.user.id) {
         //     return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
         // }
-        const { content, userId }: { content: string, userId: string } = await req.json()
+        const { content }: { content: string } = await req.json()
         const newTask = await prisma.task.create({
             data: {
                 content,
                 isDone: false,
                 isNew: true,
-                userId,
-
+                userId: session.user.id
             }
         })
         return NextResponse.json(newTask)
