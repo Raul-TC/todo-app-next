@@ -99,7 +99,7 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
     }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
 
 
 
