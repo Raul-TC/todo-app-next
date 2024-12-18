@@ -10,13 +10,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         // }
         const session = await auth()
-        if (!params.id || !session || !session.user.id) {
+        if (!session || !session.user.id) {
             return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         }
 
-        if (params.id !== session?.user.id) {
-            return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
-        }
+        // if (params.id !== session?.user.id) {
+        //     return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
+        // }
         const { status, type, content, isNew }: { status?: boolean, type?: string, content: string, isNew: boolean } = await req.json()
         console.log({ status, type, content, isNew })
 
