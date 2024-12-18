@@ -99,19 +99,19 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
     }
 }
 
-export async function GET(req: Request, { params }: { params: { id?: string } }) {
+export async function GET(req: Request) {
 
 
 
     try {
         const session = await auth()
-        if (!params.id || !session || !session.user.id) {
+        if (!session || !session.user.id) {
             return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         }
 
-        if (params.id !== session?.user.id) {
-            return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
-        }
+        // if (params.id !== session?.user.id) {
+        //     return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
+        // }
 
         const tasks = await prisma.task.findMany({
             where: {
