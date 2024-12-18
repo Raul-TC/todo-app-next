@@ -1,8 +1,12 @@
+import { auth } from "@/auth";
 import prisma from "@/libs/db";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-    if (!params.id) {
+
+    const session = await auth()
+
+    if (!params.id || session?.user.id) {
         return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
     }
 
@@ -64,8 +68,9 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
 }
 
 export async function GET(req: Request, { params }: { params: { id?: string } }) {
+    const session = await auth()
 
-    if (!params.id) {
+    if (!params.id || session?.user.id) {
         return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
     }
 
