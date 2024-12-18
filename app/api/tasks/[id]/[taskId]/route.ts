@@ -16,7 +16,7 @@ export async function GET(req: Request, { params }: { params: { id?: string, tas
             return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
         }
 
-        const tasks = await prisma.task.findMany({
+        const tasks = await prisma.task.findFirst({
             where: {
                 userId: session?.user.id,
                 id: params.taskId,
@@ -26,7 +26,7 @@ export async function GET(req: Request, { params }: { params: { id?: string, tas
             }
         })
 
-        if (tasks.length === 0) {
+        if (!tasks) {
             return NextResponse.json({ message: "No tasks found for this user" }, { status: 404 });
         }
         return NextResponse.json(tasks)
