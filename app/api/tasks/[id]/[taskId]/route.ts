@@ -19,7 +19,7 @@ export async function GET(req: Request, { params }: { params: { id?: string, tas
         const tasks = await prisma.task.findFirst({
             where: {
                 userId: session?.user.id,
-                id: params.taskId,
+                id: Number(params.taskId),
             },
             orderBy: {
                 id: 'desc'
