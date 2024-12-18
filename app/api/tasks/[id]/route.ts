@@ -67,16 +67,15 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
             return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         }
 
-        if (params.id !== session?.user.id) {
-            return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
-        }
+        // if (params.id !== session?.user.id) {
+        //     return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
+        // }
         const { type } = await req.json()
         if (type === 'one') {
             const deleteTask = await prisma.task.delete({
                 where: {
                     userId: session.user.id,
                     id: Number(params.id)
-                    ,
                 }
             });
             return NextResponse.json(deleteTask);
