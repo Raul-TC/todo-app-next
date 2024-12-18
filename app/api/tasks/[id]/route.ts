@@ -23,6 +23,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             }
         })
 
+        console.log({ idTask, status, type, content, isNew })
+        console.log({ updatedTask })
         return NextResponse.json(updatedTask)
     } catch (error) {
         return NextResponse.json({ message: 'Error al actualizar la tarea', error }, { status: 500 });
