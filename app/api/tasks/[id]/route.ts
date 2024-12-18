@@ -12,7 +12,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         const taskDone = type === 'done' ? status : false
         const updatedTask = await prisma.task.update({
             where: {
-                userId: params.id,
+                //userId: params.id,
                 id: idTask
             },
             data: {
