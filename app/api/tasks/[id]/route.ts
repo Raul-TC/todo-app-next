@@ -1,19 +1,45 @@
+import { auth } from "@/auth";
 import prisma from "@/libs/db";
 import { NextResponse } from "next/server";
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
-    if (!params.id) {
-        return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
-    }
 
     try {
+
+        // if (!params.id) {
+        //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+        // }
+        const session = await auth()
+        if (!params.id || !session || !session.user.id) {
+            return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+        }
+
+        if (params.id !== session?.user.id) {
+            return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
+        }
         const { idTask, status, type, content, isNew }: { idTask: number, status?: boolean, type?: string, content: string, isNew: boolean } = await req.json()
+        console.log({ idTask, status, type, content, isNew })
+
+        // const task = await prisma.task.findUnique({
+        //     where: {
+        //         id: idTask,
+        //     }
+        // });
+
+        // if (!task) {
+        //     return NextResponse.json({ message: 'Tarea no encontrada' }, { status: 404 });
+        // }
+
+        // // Verificar que el `userId` de la tarea coincida con el de la sesión
+        // if (task.userId !== params.id) {
+        //     return NextResponse.json({ message: 'No tienes permiso para modificar esta tarea' }, { status: 403 });
+        // }
 
         const taskDone = type === 'done' ? status : false
         const updatedTask = await prisma.task.update({
             where: {
-                //userId: params.id,
-                id: idTask
+                id: idTask,
+                userId: params.id,
             },
             data: {
 
@@ -23,10 +49,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
             }
         })
 
+
+
         console.log({ idTask, status, type, content, isNew })
         console.log({ updatedTask })
         return NextResponse.json(updatedTask)
     } catch (error) {
+        console.log({ error })
         return NextResponse.json({ message: 'Error al actualizar la tarea', error }, { status: 500 });
     }
 }
@@ -35,11 +64,16 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 export async function DELETE(req: Request, { params }: { params: { id?: string } }) {
 
 
-    if (!params.id) {
-        return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
-    }
 
     try {
+        const session = await auth()
+        if (!params.id || !session || !session.user.id) {
+            return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+        }
+
+        if (params.id !== session?.user.id) {
+            return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
+        }
         const { idTask, type } = await req.json()
         if (idTask && type === 'one') {
             const deleteTask = await prisma.task.delete({
@@ -67,14 +101,21 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
 
 export async function GET(req: Request, { params }: { params: { id?: string } }) {
 
-    if (!params.id) {
-        return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
-    }
+
 
     try {
+        const session = await auth()
+        if (!params.id || !session || !session.user.id) {
+            return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+        }
+
+        if (params.id !== session?.user.id) {
+            return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
+        }
+
         const tasks = await prisma.task.findMany({
             where: {
-                userId: params.id
+                userId: session?.user.id,
             },
             orderBy: {
                 id: 'desc'
@@ -93,11 +134,16 @@ export async function GET(req: Request, { params }: { params: { id?: string } })
 
 export async function POST(req: Request, { params }: { params: { id?: string } }) {
 
-    if (!params.id) {
-        return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
-    }
 
     try {
+        const session = await auth()
+        if (!params.id || !session || !session.user.id) {
+            return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+        }
+
+        if (params.id !== session?.user.id) {
+            return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
+        }
         const { content, userId }: { content: string, userId: string } = await req.json()
         const newTask = await prisma.task.create({
             data: {
