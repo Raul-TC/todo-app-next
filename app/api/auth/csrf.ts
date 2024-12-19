@@ -1,28 +1,27 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method !== 'POST') {
-        // Devuelve un error si no es POST
-        return res.status(405).json({
+export async function handler(req: NextRequest) {
+    if (req.method === 'GET') {
+        // Respuesta exitosa para GET
+        return NextResponse.json(
+            {
+                success: true,
+                message: 'CSRF token retrieved successfully.',
+            },
+            { status: 200 }
+        );
+    }
+
+    // Manejo de error para POST u otros métodos
+    return NextResponse.json(
+        {
             error: 'Method not allowed',
-            message: 'Only POST requests are allowed on this endpoint.',
-        });
-    }
-
-    // Aquí puedes validar tu lógica (por ejemplo, token CSRF o datos en el body)
-    const { csrfToken } = req.body;
-
-    if (!csrfToken || csrfToken !== 'expected-token') {
-        // Error personalizado para problemas de validación
-        return res.status(403).json({
-            error: 'Invalid CSRF token',
-            message: 'The CSRF token provided is invalid or missing.',
-        });
-    }
-
-    // Si todo está bien
-    res.status(200).json({
-        success: true,
-        message: 'CSRF token is valid.',
-    });
+            message: 'Only GET requests are allowed on this endpoint.',
+        },
+        { status: 405 }
+    );
 }
+
+export const config = {
+    runtime: 'edge', // Opcional si estás usando Edge Runtime
+};
