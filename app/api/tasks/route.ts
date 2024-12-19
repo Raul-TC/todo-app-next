@@ -54,7 +54,7 @@ export async function POST(req: Request) {
                 userId: session.user.id
             }
         })
-        return NextResponse.json(newTask)
+        return NextResponse.json({ message: 'Task Created', newTask }, { status: 201 })
     } catch (error) {
         return NextResponse.json({ message: 'Error al crear la tarea', error }, { status: 500 });
     }
