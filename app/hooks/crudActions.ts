@@ -5,7 +5,7 @@ export const crudActions = ({ session }: { session?: Session | null }) => {
 
     const getAllTasks = async () => {
         try {
-            const url = `${process.env.NEXTAUTH_URL}/api/tasks/${session?.user.id}`
+            const url = `${process.env.NEXTAUTH_URL}/api/tasks/`
             const dbRes = await fetch(url)
 
             if (!dbRes.ok) {
@@ -51,6 +51,7 @@ export const crudActions = ({ session }: { session?: Session | null }) => {
 
 
     const updateTask = async ({ idTask, status, type, content, isNew, userId }: { idTask: number, status?: boolean, type?: string, content?: string, isNew?: boolean, userId: string | undefined, exist: boolean }) => {
+        console.log({ userId })
         try {
 
             const updateResponse = await fetch(`/api/tasks/${userId}`, {
