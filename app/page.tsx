@@ -8,8 +8,11 @@ import { crudActions } from './hooks/crudActions';
 export default async function Home() {
 
   const session = await auth()
-  const { getAllTasks } = crudActions({ session })
-  if (!session?.user.id) redirect('/auth/login')
+
+
+  console.log({ sessionFromLogin: session })
+  if (!session) redirect('/auth/login')
+  const { getAllTasks } = crudActions()
 
   const tasks = await getAllTasks()
 

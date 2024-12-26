@@ -10,9 +10,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         // }
         const session = await auth()
-        if (!session || !session.user.id) {
-            return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
-        }
+        // if (!session || !session.user.id) {
+        //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+        // }
 
         // if (params.id !== session?.user.id) {
         //     return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
@@ -39,16 +39,16 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         const updatedTask = await prisma.task.update({
             where: {
                 id: Number(params.id),
-                userId: session.user.id
+                userId: '2'
             },
             data: {
-
                 isDone: taskDone,
                 ...(type !== 'done' && { content }),
                 isNew
             }
         })
 
+        console.log({ updatedTask })
         return NextResponse.json(updatedTask)
     } catch (error) {
         console.log({ error })

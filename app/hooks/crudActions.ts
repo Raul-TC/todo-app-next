@@ -1,12 +1,14 @@
-import { Session } from "next-auth"
 import { toast } from "react-toastify"
 
-export const crudActions = ({ session }: { session?: Session | null }) => {
+export const crudActions = () => {
 
     const getAllTasks = async () => {
         try {
-            const url = `${process.env.NEXTAUTH_URL}/api/tasks/`
-            const dbRes = await fetch(url)
+            const url = `${process.env.NEXTAUTH_URL}/api/tasks`
+            const dbRes = await fetch(url, {
+                headers: { 'Content-Type': 'application/json' },
+                // credentials: 'include'
+            })
 
             if (!dbRes.ok) {
                 throw new Error('Error al obtener las tareas')
@@ -54,7 +56,7 @@ export const crudActions = ({ session }: { session?: Session | null }) => {
         console.log({ userId })
         try {
 
-            const updateResponse = await fetch(`/api/tasks/${userId}`, {
+            const updateResponse = await fetch(`/api/tasks/${idTask}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ idTask, status, type, content, isNew })
@@ -76,7 +78,7 @@ export const crudActions = ({ session }: { session?: Session | null }) => {
     const deleteTask = async ({ idTask, type, userId }: { idTask?: number, type?: string, userId: string | undefined }) => {
 
         try {
-            const url = `/api/tasks/${userId}`;
+            const url = `/api/tasks/${idTask}`;
 
             const response = await toast.promise(fetch(`${url}`, {
                 method: 'DELETE',

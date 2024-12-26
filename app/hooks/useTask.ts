@@ -12,7 +12,7 @@ export interface useTaskProps {
     updatedAt?: Date
 }
 export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
-    const { createTask, updateTask } = useMemo(() => crudActions({}), []);
+    const { createTask, updateTask } = useMemo(() => crudActions(), []);
     const userId = useTasksStore(state => state.userId)
     const updatedTaskState = useTasksStore(state => state.updateTask)
     const newTask = useTasksStore(state => state.addTask)
@@ -39,6 +39,8 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
         if (taskState.isEditable) {
             if (taskState.taskEdited !== content && taskState.taskEdited !== '') {
                 const respUpdate = await updateTask({ idTask: id!, status: taskState.isCheck, type: 'edit', content: taskState.taskEdited, isNew: false, userId: userId?.id, exist: true })
+
+                console.log({ UPDATEE: { respUpdate } })
                 updatedTaskState(respUpdate)
                 setTaskState({ ...taskState, isEditable: false, isCheck: false, timePassed: { text: "0", time: 0 } });
                 toast.success("Tarea actualizada con éxito!");
