@@ -9,7 +9,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         // if (!params.id) {
         //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         // }
-        const session = await auth()
+        // const session = await auth()
         // if (!session || !session.user.id) {
         //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         // }

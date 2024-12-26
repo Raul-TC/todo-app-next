@@ -75,7 +75,7 @@ export const crudActions = () => {
         }
     }
 
-    const deleteTask = async ({ idTask, type, userId }: { idTask?: number, type?: string, userId: string | undefined }) => {
+    const deleteTask = async ({ idTask, type }: { idTask?: number, type?: string }) => {
 
         try {
             const url = `/api/tasks/${idTask}`;

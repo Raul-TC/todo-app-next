@@ -17,9 +17,9 @@ interface ModalProps {
 }
 export const Modal = ({ id, type, setModal }: ModalProps) => {
     const deleteTasks = useTasksStore(state => state.deleteTask)
-    const userId = useTasksStore((state) => state.userId);
+    // const userId = useTasksStore((state) => state.userId);
     const tasksCompleted = useTasksStore((state) => state.tasksDone);
-    const { deleteTask } = crudActions({})
+    const { deleteTask } = crudActions()
     const setDeleteAllModal = useTasksStore((state) => state.setModal);
 
     return (
@@ -53,12 +53,12 @@ export const Modal = ({ id, type, setModal }: ModalProps) => {
                             if (type === 'one') {
                                 if (setModal) {
                                     setModal(prevState => ({ ...prevState, modalInTask: !prevState.modalInTask }));
-                                    const itemDelete = await deleteTask({ idTask: id, type, userId: userId?.id })
+                                    const itemDelete = await deleteTask({ idTask: id, type })
                                     deleteTasks(itemDelete.id)
                                 }
                             } else {
                                 setDeleteAllModal(false)
-                                const itemsDeleted = await deleteTask({ type: 'all', userId: userId?.id })
+                                const itemsDeleted = await deleteTask({ type: 'all' })
                                 console.log({ itemsDeleted })
                                 deleteTasks()
                                 // }
