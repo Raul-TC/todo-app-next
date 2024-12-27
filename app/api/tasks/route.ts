@@ -1,16 +1,16 @@
 // import { auth } from "@/auth";
+import { auth } from "@/auth";
 import prisma from "@/libs/db";
-import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request) {
+export async function GET() {
 
     try {
-        // const session = await auth()
-        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+        const session = await auth()
+        // const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
         console.log('OBTENIENDNO TASKS ')
-        console.log({ token })
+        console.log({ session })
         // if (!session || !session.user.id) {
         //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         // }
@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
         const tasks = await prisma.task.findMany({
             where: {
-                userId: '2',
+                userId: session?.user.id,
             },
             orderBy: {
                 id: 'desc'

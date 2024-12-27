@@ -13,6 +13,9 @@ export async function POST(request: NextRequest) {
     try {
         const data: UserData = await request.json()
         const { username, email, password } = data
+
+        console.log({ data })
+
         const userFound = await db.user.findUnique({
             where: {
                 username
@@ -51,6 +54,7 @@ export async function POST(request: NextRequest) {
         // const { password: _, ...user } = newUser
         return NextResponse.json(newUser)
     } catch (error: unknown) {
+        console.log({ error })
         if (error instanceof Error) {
             return NextResponse.json({
                 message: error.message,

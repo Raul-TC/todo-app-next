@@ -2,7 +2,9 @@ import { PrismaClient } from '@prisma/client'
 
 // Este codigo ayuda a desarrollar en modo dev sin interrupcion
 const prismaClientSingleton = () => {
-    return new PrismaClient()
+    return new PrismaClient({
+        log: ['query', 'info', 'warn', 'error'], // Habilita los logs detallados
+    })
 }
 
 declare const globalThis: {
