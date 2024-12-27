@@ -8,10 +8,11 @@ export async function GET(req: Request) {
 
     try {
         const session = await getSession()
-        // const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
         console.log('OBTENIENDNO TASKS ')
         console.log({ session })
+        console.log({ token })
         // if (!session || !session.user.id) {
         //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         // }
