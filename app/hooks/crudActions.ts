@@ -5,10 +5,7 @@ export const crudActions = () => {
     const getAllTasks = async () => {
         try {
             const url = `${process.env.NEXTAUTH_URL}/api/tasks`
-            const dbRes = await fetch(url, {
-                headers: { 'Content-Type': 'application/json' },
-                // credentials: 'include'
-            })
+            const dbRes = await fetch(url)
 
             if (!dbRes.ok) {
                 throw new Error('Error al obtener las tareas')
@@ -25,7 +22,7 @@ export const crudActions = () => {
     const createTask = async ({ content, userId }: { content: string, userId: string | undefined, exist: boolean }) => {
         try {
 
-            const updateResponse = await toast.promise(fetch(`/api/tasks/${userId}`, {
+            const updateResponse = await toast.promise(fetch(`/api/tasks/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ content, userId })
