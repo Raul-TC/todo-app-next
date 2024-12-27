@@ -1,13 +1,14 @@
 // import { auth } from "@/auth";
-import { auth } from "@/auth";
 import prisma from "@/libs/db";
+import { getToken } from "next-auth/jwt";
+import { getSession } from "next-auth/react";
 import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: Request) {
 
     try {
-        const session = await auth()
-        // const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+        const session = await getSession()
+        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
         console.log('OBTENIENDNO TASKS ')
         console.log({ session })
@@ -21,7 +22,7 @@ export async function GET() {
 
         const tasks = await prisma.task.findMany({
             where: {
-                userId: session?.user.id,
+                userId: '2',
             },
             orderBy: {
                 id: 'desc'
