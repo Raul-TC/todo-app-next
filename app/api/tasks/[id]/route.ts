@@ -5,15 +5,17 @@ import { NextResponse } from "next/server";
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
 
     try {
+        const session = await auth()
 
-        // if (!params.id) {
-        //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
-        // }
-        // const session = await auth()
-        // if (!session || !session.user.id) {
+        // if (!params.id ||) {
         //     return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         // }
 
+        if (!session || !session.user.id) {
+            return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+        }
+
+        console.log({ sessionPATCH: session.user.id })
         // if (params.id !== session?.user.id) {
         //     return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
         // }
@@ -39,7 +41,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
         const updatedTask = await prisma.task.update({
             where: {
                 id: Number(params.id),
-                userId: '2'
+                // userId: session?.user.id
             },
             data: {
                 isDone: taskDone,
@@ -66,6 +68,7 @@ export async function DELETE(req: Request, { params }: { params: { id?: string }
         if (!params.id || !session || !session.user.id) {
             return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         }
+        console.log({ sessionDELETE: session.user.id })
 
         // if (params.id !== session?.user.id) {
         //     return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });

@@ -49,10 +49,15 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
                 setTaskState(prevState => ({ ...prevState, isEditable: false }));
             }
         } else {
-            const addNewTask = await createTask({ content: taskState.task, userId: userId?.id, exist: false })
-            newTask(addNewTask)
+            const addNewTask = await createTask({ content: taskState.task, exist: false })
+            // const addNewTask = await createTask({ content: taskState.task, , exist: false })
+            newTask(addNewTask.newTask)
+            console.log({ addNewTask })
+
             setTimeout(async () => {
-                const updateRes = await updateTask({ idTask: addNewTask.id, exist: true, isNew: false, userId: addNewTask.userId })
+                const updateRes = await updateTask({ idTask: addNewTask.newTask.id, exist: true, isNew: false, userId: addNewTask.newTask.userId })
+
+                console.log({ updateRes })
                 updatedTaskState(updateRes)
             }, 300);
         }

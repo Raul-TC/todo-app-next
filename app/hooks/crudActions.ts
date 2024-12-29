@@ -2,11 +2,19 @@ import { toast } from "react-toastify"
 
 export const crudActions = () => {
 
-    const getAllTasks = async () => {
+    const getAllTasks = async (context) => {
+
+        console.log({ context })
         try {
             const url = `${process.env.NEXTAUTH_URL}/api/tasks`
-            const dbRes = await fetch(url)
+            const dbRes = await fetch(url, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `${context.user.id}`, // Ejemplo, puedes pasar datos como sea necesario
+                },
+            })
 
+            console.log({ url })
             if (!dbRes.ok) {
                 throw new Error('Error al obtener las tareas')
             }
@@ -19,13 +27,13 @@ export const crudActions = () => {
         }
     }
 
-    const createTask = async ({ content, userId }: { content: string, userId: string | undefined, exist: boolean }) => {
+    const createTask = async ({ content }: { content: string, exist: boolean }) => {
         try {
 
-            const updateResponse = await toast.promise(fetch(`/api/tasks/`, {
+            const updateResponse = await toast.promise(fetch(`/api/tasks`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content, userId })
+                body: JSON.stringify({ content })
             }), {
                 pending: 'Creando nueva Tarea'
             })
