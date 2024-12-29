@@ -1,8 +1,9 @@
+import { Session } from "next-auth"
 import { toast } from "react-toastify"
 
 export const crudActions = () => {
 
-    const getAllTasks = async (context) => {
+    const getAllTasks = async (context: Session) => {
 
         console.log({ context })
         try {
