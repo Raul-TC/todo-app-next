@@ -13,7 +13,7 @@ export async function GET(req: Request) {
         console.log('OBTENIENDNO TASKS ')
         console.log({ sessionGET: req.headers.get('authorization') })
         // console.log({ token })
-        if (!userId) {
+        if (!userId || userId === '') {
             return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         }
 
