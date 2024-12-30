@@ -5,26 +5,33 @@ export const crudActions = () => {
 
     const getAllTasks = async (context: Session) => {
 
-        console.log({ context })
+        // console.log({ context })
         try {
             const url = `${process.env.NEXTAUTH_URL}/api/tasks`
             const dbRes = await fetch(url, {
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `${context.user.id}`, // Ejemplo, puedes pasar datos como sea necesario
+                    // Authorization: '', // Ejemplo, puedes pasar datos como sea necesario
                 },
             })
 
-            console.log({ url })
+            // console.log({ dbRes: dbRes.status })
             if (!dbRes.ok) {
-                throw new Error('Error al obtener las tareas')
+                throw new Error(`${dbRes.statusText} ${dbRes.status}`)
             }
             const tasks = await dbRes.json()
 
             return tasks
 
         } catch (error) {
-            console.log("Error fetching data", error)
+            // console.log("Error fetching data", error)
+            return {
+                error: {
+                    isError: true,
+                    message: error
+                }
+            }
         }
     }
 

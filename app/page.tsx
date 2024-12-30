@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import { auth } from '@/auth';
 import TaskSkeleton from './components/SkeletonTasks';
 import { crudActions } from './hooks/crudActions';
+import { h1 } from 'framer-motion/client';
 
 export default async function Home() {
 
@@ -16,9 +17,15 @@ export default async function Home() {
 
   const tasks = await getAllTasks(session)
 
+  console.log(typeof tasks)
   return (
     <Suspense key={crypto.randomUUID()} fallback={<TaskSkeleton />}>
-      <TodoList session={session} tasks={tasks} />
+      {
+        !tasks.error?.isError ? <TodoList session={session} tasks={tasks} />
+          : <div className='min-h-[calc(100vh-308px)] flex'>
+            <h1 className='text-center m-auto text-3xl'>{tasks.error?.message.toString()}</h1>
+          </div>
+      }
     </Suspense>
   )
 }
