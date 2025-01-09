@@ -4,7 +4,6 @@ import { Suspense } from 'react';
 import { auth } from '@/auth';
 import TaskSkeleton from './components/SkeletonTasks';
 import { crudActions } from './hooks/crudActions';
-import { h1 } from 'framer-motion/client';
 
 export default async function Home() {
 
