@@ -13,7 +13,14 @@ export async function GET(req: Request) {
         console.log('OBTENIENDNO TASKS ')
         console.log({ sessionGET: req.headers.get('authorization') })
         // console.log({ token })
-        if (!userId || userId === '') {
+
+        const userWithId = await prisma.task.findFirst({
+            where: {
+                userId: userId || "0"
+            }
+        })
+
+        if (!userId || userId === '' || userWithId) {
             return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         }
 
