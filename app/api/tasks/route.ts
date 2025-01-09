@@ -10,20 +10,24 @@ export async function GET(req: Request) {
         const userId = req.headers.get('authorization')
         // const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-        console.log('OBTENIENDNO TASKS ')
+        console.log({ userId })
         console.log({ sessionGET: req.headers.get('authorization') })
         // console.log({ token })
 
+
+
+        if (!userId || userId === '') {
+            return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
+        }
         const userWithId = await prisma.task.findFirst({
             where: {
                 userId: userId || "0"
             }
         })
-
-        if (!userId || userId === '' || userWithId) {
+        console.log({ userWithId })
+        if (!userWithId) {
             return NextResponse.json({ message: 'No autorizado' }, { status: 401 });
         }
-
         // if (params.id !== session?.user.id) {
         //     return NextResponse.json({ message: 'No tienes permiso para acceder a estas tareas' }, { status: 403 });
         // }
