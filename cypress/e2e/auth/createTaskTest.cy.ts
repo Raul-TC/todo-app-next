@@ -30,8 +30,8 @@ describe('Create a Task', () => {
             cy.wait('@addTask').then((interception) => {
                 // Verificar la respuesta del servidor
                 cy.log(`${interception}`)
-                expect(interception.response.statusCode).to.eq(201);
-                expect(interception.response.body).to.have.property('message', 'Task Created');
+                expect(interception.response?.statusCode).to.eq(201);
+                expect(interception.response?.body).to.have.property('message', 'Task Created');
             });
             cy.get('[data-test^="taskContainer"').its('length').should('eq', task + 1)
         })
