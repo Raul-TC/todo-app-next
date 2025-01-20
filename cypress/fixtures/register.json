@@ -1,0 +1,32 @@
+{
+    "validRegister": {
+        "userName": "Graffito4",
+        "email": "graffito4@hotmail.com",
+        "password": "graffito1234",
+        "confirmPassword": "graffito1234"
+    },
+    "invalidEmailRegister": {
+        "userName": "Graffito777",
+        "email": "graffitoq@com",
+        "password": "graffito1234",
+        "confirmPassword": "graffito1234"
+    },
+    "existUserNameRegister": {
+        "userName": "Graffito5555",
+        "email": "graffito4444@hotmail.com",
+        "password": "graffito1234",
+        "confirmPassword": "graffito1234"
+    },
+    "differentPasswordRegister": {
+        "userName": "Graffito",
+        "email": "graffito@hotmail.com",
+        "password": "graffito1234",
+        "confirmPassword": "graffito12"
+    },
+    "existEmailRegister": {
+        "userName": "Graffito999",
+        "email": "graffito4@hotmail.com",
+        "password": "graffito1234",
+        "confirmPassword": "graffito1234"
+    }
+}
