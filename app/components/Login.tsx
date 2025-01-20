@@ -31,7 +31,7 @@ export const Login = () => {
                     placeholder='Email'
                 />
                 {errors?.email && (
-                    <span className='text-red-500'>{errors.email.message}</span>
+                    <span data-test='error-email' className='text-red-500'>{errors.email.message}</span>
                 )}
 
                 <input type="password"
@@ -40,7 +40,7 @@ export const Login = () => {
                     placeholder='Password'
                 />
                 {errors?.password && (
-                    <span className='text-red-500'>{errors.password.message}</span>
+                    <span data-test='error-password' className='text-red-500'>{errors.password.message}</span>
                 )}
 
                 <button disabled={loading} type='submit' className='w-1/2 mx-auto font-bold dark:bg-containerDark py-3 rounded-md dark:text-textDark bg-containerLight border-darkBg text-textLight dark:hover:bg-darkBg hover:bg-textOpacity hover:text-textDark transition-colors duration-300 ease-in dark:hover:border-[0.5px] dark:hover:border-containerLight'>{loading ? 'Loading...' : 'Send'}</button>

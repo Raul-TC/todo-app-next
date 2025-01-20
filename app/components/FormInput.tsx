@@ -46,7 +46,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                 ?
                 <>
                     <AnimatePresence>
-                        <div style={style} className='w-full'>
+                        <div style={style} className='w-full' data-test={`taskContainer-${id}`}>
 
                             <motion.div
                                 initial='offscreen'
@@ -76,9 +76,11 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                     ?
                                     <>
                                         <form
+
                                             className=' dark:text-lightBg w-full text-textLight h-full text-sm outline-none break-all gap-2 overflow-hidden'
                                             onSubmit={handleSubmit}>
                                             <input
+                                                data-test='form-edit'
                                                 type="text"
                                                 className='dark:bg-[#2f3041] dark:text-lightBg bg-lightBg w-full text-textLight text-base py-2 outline-none break-all px-3 rounded-md'
                                                 autoFocus
@@ -98,7 +100,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                         <div
                                             {...attributes}
                                             {...listeners}
-                                            className='flex flex-col w-full break-all cursor-grab '>
+                                            className='flex flex-col w-full break-all cursor-grab ' >
 
                                             <p className={`${isCheck ? 'text-gray-400 line-through' : ''} text-start block text-base transition-colors duration-300 ease-in w-full`}>{content}</p>
                                             <span className='text-xs text-textOpacity'>{timePassed.time >= 0 ? timePassed.text : '⏱️ waiting'}</span>
@@ -110,7 +112,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                     {isEditable ?
                                         <AiOutlineCheck onClick={handleSubmit} className='block text-xl md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer' />
                                         :
-                                        <MdModeEditOutline className='md:opacity-0 w-10 p-2 md:hover:text-blue-400 md:group-hover:opacity-100 h-full md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer'
+                                        <MdModeEditOutline data-test='edit-task' className='md:opacity-0 w-10 p-2 md:hover:text-blue-400 md:group-hover:opacity-100 h-full md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer'
                                             onClick={() => {
                                                 setTaskState(prevState => ({ ...prevState, isEditable: true, task: content! }))
                                             }} />
@@ -132,6 +134,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                         className='dark:bg-containerDark dark:text-textDark bg-containerLight text-textLight w-full flex items-center justify-between rounded-md overflow-hidden transition-colors duration-300 ease-in mb-8'
                     >
                         <input
+                            data-test='todoInput'
                             type="text"
                             className='dark:bg-containerDark dark:text-textDark bg-containerLight text-base text-textLight py-4 px-3 w-[75%] outline-none transition-colors duration-300 ease-in'
                             onChange={handleChange}
