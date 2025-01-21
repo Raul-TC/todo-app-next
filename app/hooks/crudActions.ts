@@ -38,7 +38,7 @@ export const crudActions = () => {
             return {
                 error: {
                     isError: true,
-                    message: error.message
+                    message: (error instanceof Error) ? error.message : 'Unknown error'
                 }
             }
         }
