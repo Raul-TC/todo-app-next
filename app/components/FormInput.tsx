@@ -102,7 +102,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                             {...listeners}
                                             className='flex flex-col w-full break-all cursor-grab ' >
 
-                                            <p className={`${isCheck ? 'text-gray-400 line-through' : ''} text-start block text-base transition-colors duration-300 ease-in w-full`}>{content}</p>
+                                            <p data-test='taskText' className={`${isCheck ? 'text-gray-400 line-through' : ''} text-start block text-base transition-colors duration-300 ease-in w-full`}>{content}</p>
                                             <span className='text-xs text-textOpacity'>{timePassed.time >= 0 ? timePassed.text : '⏱️ waiting'}</span>
                                         </div>
 
@@ -110,7 +110,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                 }
                                 <div className='flex items-center justify-center h-full gap-2 flex-none'>
                                     {isEditable ?
-                                        <AiOutlineCheck onClick={handleSubmit} className='block text-xl md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer' />
+                                        <AiOutlineCheck data-test='confirm-edit-task' onClick={handleSubmit} className='block text-xl md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer' />
                                         :
                                         <MdModeEditOutline data-test='edit-task' className='md:opacity-0 w-10 p-2 md:hover:text-blue-400 md:group-hover:opacity-100 h-full md:group-hover:cursor-pointer transition-colors duration-300 ease-in cursor-pointer'
                                             onClick={() => {
@@ -118,6 +118,7 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                             }} />
                                     }
                                     <AiOutlineClose
+                                        data-test='deleteTask'
                                         onClick={() => setTaskState(prevState => ({ ...prevState, modalInTask: true }))
                                         }
                                         className='md:opacity-0 md:group-hover:opacity-100 h-full w-10 p-2 md:hover:text-red-400 md:group-hover:cursor-pointer transition-colors duration-300 ease-in text-xl cursor-pointer'

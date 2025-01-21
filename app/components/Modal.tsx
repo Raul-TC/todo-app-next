@@ -24,7 +24,9 @@ export const Modal = ({ id, type, setModal }: ModalProps) => {
 
     return (
         <div className='bg-[#2c2c2c9f] fixed z-50 top-0 left-0 h-[100vh] w-full flex items-center justify-center'>
-            <div className='dark:bg-containerDark dark:text-textDark bg-containerLight text-textLight absolute rounded-2xl flex flex-col items-center justify-center p-7 w-[90%] md:w-1/2 md:max-w-md'>
+            <div
+                data-test='modalDelete'
+                className='dark:bg-containerDark dark:text-textDark bg-containerLight text-textLight absolute rounded-2xl flex flex-col items-center justify-center p-7 w-[90%] md:w-1/2 md:max-w-md'>
                 <h1 className='text-3xl font-bold'>{type === 'one'
                     ? 'Delete Task'
                     : `Delete  Tasks`}</h1>
@@ -35,7 +37,9 @@ export const Modal = ({ id, type, setModal }: ModalProps) => {
                     }
                 </p>
                 <div className='flex justify-between w-full gap-3 mt-3'>
-                    <button className='text-base font-bold p-3 rounded-md cursor-pointer w-2/3 bg-gray-600 hover:bg-opacity-75 text-white'
+                    <button
+                        data-test='noCancel'
+                        className='text-base font-bold p-3 rounded-md cursor-pointer w-2/3 bg-gray-600 hover:bg-opacity-75 text-white'
                         onClick={() => {
                             if (type === 'one') {
                                 if (setModal) {
@@ -48,6 +52,7 @@ export const Modal = ({ id, type, setModal }: ModalProps) => {
                         NO, CANCEL
                     </button>
                     <button
+                        data-test='yesDelete'
                         className='text-base font-bold p-3 rounded-md cursor-pointer w-2/3 bg-red-600 hover:bg-opacity-75 text-white'
                         onClick={async () => {
                             if (type === 'one') {

@@ -5,7 +5,16 @@ export const crudActions = () => {
 
     const getAllTasks = async (context: Session) => {
 
-        // console.log({ context })
+        console.log({ context })
+        if (!context?.user?.id) {
+            console.log("Contexto inválido. Usuario no autenticado.");
+            return {
+                error: {
+                    isError: true,
+                    message: "Usuario no autenticado",
+                },
+            };
+        }
         try {
             const url = `${process.env.NEXTAUTH_URL}/api/tasks`
             const dbRes = await fetch(url, {
@@ -15,21 +24,21 @@ export const crudActions = () => {
                     // Authorization: '', // Ejemplo, puedes pasar datos como sea necesario
                 },
             })
-
-            // console.log({ dbRes: dbRes.status })
-            if (!dbRes.ok) {
-                throw new Error(`${dbRes.statusText} ${dbRes.status}`)
-            }
             const tasks = await dbRes.json()
+
+            console.log({ dbRes: dbRes.body })
+            if (!dbRes.ok) {
+                throw new Error(`Error: ${dbRes.status} - ${tasks.message} `)
+            }
 
             return tasks
 
         } catch (error) {
-            // console.log("Error fetching data", error)
+            console.log("Error fetching data", error)
             return {
                 error: {
                     isError: true,
-                    message: error
+                    message: error.message
                 }
             }
         }
@@ -99,8 +108,8 @@ export const crudActions = () => {
                 body: JSON.stringify({ idTask, type })
             })
                 , {
-                    pending: `Eliminando ${type === 'one' ? 'tarea' : 'tareas'}`,
-                })
+                    pending: `Eliminando ${type === 'one' ? 'Tarea' : 'Tareas'}`,
+                }, { autoClose: 10000 })
 
             if (!response.ok) {
                 // error: `Error al eliminar ${type === 'one' ? 'la tarea' : 'las tareas'}`
