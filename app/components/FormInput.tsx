@@ -59,16 +59,16 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                                 <div className='flex items-center justify-center'>
                                     <input
                                         type='checkbox'
-                                        checked={isDone}
+                                        checked={isCheck}
                                         id={id?.toString()}
-                                        className={'hidden border-none outline-none'}
+                                        className={'hidden border-none outline-none transition-all duration-300 ease-in'}
                                         onChange={handleChangeCheckbox}>
                                     </input>
 
-                                    <label className={`${isCheck ? 'bg-bgCheck text-white' : 'border-[1px] border-gray-300'} w-6 h-6 rounded-full  flex items-center justify-center cursor-pointer`}
+                                    <label className={`${isCheck ? 'bg-bgCheck text-white' : 'border-[1px] border-gray-300'} w-6 h-6 rounded-full flex items-center justify-center cursor-pointer `}
                                         htmlFor={id?.toString()}>
                                         {
-                                            <AiOutlineCheck className={` ${isCheck ? 'opacity-100' : ' opacity-0'} transition-all duration-300 ease-in text-sm border-[1px] w-full h-full border-lightBg rounded-full`} />
+                                            <AiOutlineCheck className={` ${isCheck ? 'opacity-100' : ' opacity-0'} transition-opacity duration-300 ease-in text-sm border-[1px] w-full h-full border-lightBg rounded-full`} />
                                         }
                                     </label>
                                 </div>
@@ -141,7 +141,10 @@ export const FormInput = ({ isNewTask = true, id, isDone, content, isNew, update
                             onChange={handleChange}
                             value={task}
                             placeholder='Create a new task...' />
-                        <button disabled={tries >= 5 && task.length <= 0} className={`mr-4 ${tries >= 5 && task.length <= 0 ? 'bg-red-400 text-containerLight ' : 'active:translate-y-1'}  transition-colors duration-300 ease-in`} >
+                        <button
+                            data-test='addTask'
+                            disabled={tries >= 5 && task.length <= 0}
+                            className={`mr-4 ${tries >= 5 && task.length <= 0 ? 'bg-red-400 text-containerLight ' : 'active:translate-y-1'}  transition-colors duration-300 ease-in`} >
                             Add Task
                         </button>
                     </form>
