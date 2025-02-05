@@ -72,9 +72,9 @@ export function useTask({ id, content, isDone, updatedAt }: useTaskProps) {
 
     const handleChangeCheckbox = async (e: React.ChangeEvent<HTMLInputElement>) => {
         e.stopPropagation();
+        setTaskState(prevState => ({ ...prevState, isCheck: !taskState.isCheck, timePassed: { text: "", time: 0 } }));
         const resUpdated = await updateTask({ idTask: id!, status: !isDone, type: 'done', isNew: false, userId: userId?.id, exist: true });
 
-        setTaskState(prevState => ({ ...prevState, isCheck: !taskState.isCheck, timePassed: { text: "", time: 0 } }));
         updatedTaskState(resUpdated)
         return taskState.isCheck
             ?
