@@ -32,12 +32,17 @@ git clone https://github.com/Raul-TC/todo-app-next.git
 cd todo-app-next
 ```
 
-### 📦 Instalar dependencias
+### 📦 Instalar dependencias y configurar la base de datos
 ```bash
 npm install
+
+# Configurar la base de datos
+cp .env.example .env
+# Asegúrate de configurar DATABASE_URL en el archivo .env
+# Edita el archivo .env con tus credenciales de base de datos
 ```
 
-### ▶ Ejecutar el proyecto
+### ▶ Ejecutar el proyecto (Asegúrate de que la base de datos esté corriendo)
 ```bash
 npm run dev
 ```
