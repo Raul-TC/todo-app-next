@@ -1,4 +1,10 @@
 /// <reference types="cypress" />
+
+
+import { authSelectors } from "../selectors"
+import { authPage } from "./pages/authPage"
+import { utils } from "./utils"
+
 // ***********************************************
 // This example commands.ts shows you how to
 // create various custom commands and overwrite
@@ -37,22 +43,15 @@
 // }
 
 Cypress.Commands.add('loginUser', ({ email, password }: { email: string, password: string }) => {
-    // cy.visit('/auth/signin')
-    cy.contains('Sign In').should('be.visible')
-    cy.get('input[name="email"]').type(email)
-    cy.get('input[name="password"]').type(password)
-    cy.get('button[type="submit"]').click()
-
+    utils.visitPage({ page: '/' })
+    utils.textIsVisible({ text: authSelectors.titlePage({ type: 'login' }) })
+    authPage.loginUser({ email, password })
 })
-Cypress.Commands.add('registerUser', ({ userName, email, password, confirmPassword }: { userName: string, email: string, password: string, confirmPassword: string }) => {
-    // cy.visit('/auth/signin')
-    cy.contains('Register').should('be.visible')
-    cy.get('input[name="username"]').type(userName)
-    cy.get('input[name="email"]').type(email)
-    cy.get('input[name="password"]').type(password)
-    cy.get('input[name="confirmPassword"]').type(confirmPassword)
-    cy.get('button[type="submit"]').click()
 
+Cypress.Commands.add('registerUser', ({ userName, email, password, confirmPassword }: { userName: string, email: string, password: string, confirmPassword: string }) => {
+    utils.visitPage({ page: '/register' })
+    utils.textIsVisible({ text: authSelectors.titlePage({ type: 'Register' }) })
+    authPage.registerUser({ userName, email, password, confirmPassword })
 })
 
 declare global {
