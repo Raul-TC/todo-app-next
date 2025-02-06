@@ -75,7 +75,7 @@ export default function Register() {
                     placeholder='Email'
                 />
                 {errors?.email && (
-                    <span data-test='emailError' className='text-red-500'>{errors.email.message}</span>
+                    <span data-test='errorEmail' className='text-red-500'>{errors.email.message}</span>
                 )}
 
                 <input type="password"
@@ -84,7 +84,7 @@ export default function Register() {
                     placeholder='Password'
                 />
                 {errors?.password && (
-                    <span data-test='passwordError' className='text-red-500'>{errors.password.message}</span>
+                    <span data-test='errorPassword' className='text-red-500'>{errors.password.message}</span>
                 )}
                 <input type="password"
                     {...register("confirmPassword", { required: 'Confirm password is required' })}
