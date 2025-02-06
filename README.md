@@ -21,7 +21,8 @@ To-Do List es una aplicación sencilla que incluye sesiones de usuario para gest
 - Pruebas automatizadas con Cypress
 
 ## 🛠 Tecnologías Utilizadas
-- **Frontend:** Next.js, React, Tailwind CSS, Zustand
+- **Frontend:** Next.js 14, React, Tailwind CSS, Zustand
+- **Base de Datos:** PostgreSQL
 - **Testing:** Cypress
 
 ## 📥 Instalación y Uso
